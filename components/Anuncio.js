@@ -19,8 +19,8 @@ export default function Anuncio({ promo }) {
 
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col md:flex-row mb-8 transition-shadow duration-300 hover:shadow-2xl">
-      <div className="md:w-64 lg:w-72 md:flex-shrink-0">
-        <img className="h-full w-full object-cover" src={promo.imageUrl} alt={`Imagem de ${promo.title}`} onError={(e) => { e.target.onerror = null; e.target.src='https://placehold.co/800x600/ef4444/ffffff?text=Imagem+Indisponível'; }} />
+      <div className="md:w-64 lg:w-72 md:flex-shrink-0 flex items-center justify-center bg-surface-200 rounded-l-xl">
+        <img className="h-full w-full object-contain p-2" src={promo.imageUrl} alt={`Imagem de ${promo.title}`} onError={(e) => { e.target.onerror = null; e.target.src='https://placehold.co/800x600/ef4444/ffffff?text=Imagem+Indisponível'; }} />
       </div>
       <div className="p-6 md:p-8 flex-1 flex flex-col justify-between">
         <div>
