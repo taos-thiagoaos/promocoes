@@ -1,4 +1,8 @@
 import Link from 'next/link';
+import getConfig from 'next/config';
+
+const { publicRuntimeConfig } = getConfig();
+const basePath = publicRuntimeConfig.basePath || '';
 
 export default function Sidebar({ links, anuncios, stores }) {
   return (
@@ -9,7 +13,7 @@ export default function Sidebar({ links, anuncios, stores }) {
           <h3 className="font-bold text-xl mb-4 border-b pb-2">Destaques</h3>
           {anuncios.map(anuncio => (
             <div key={anuncio.id} className="mb-4 last:mb-0">
-              <img src={anuncio.imageUrl} alt={anuncio.title} className="rounded-lg mb-2" onError={(e) => { e.target.onerror = null; e.target.src='https://placehold.co/400x400/ef4444/ffffff?text=Imagem+Indisponível'; }}/>
+              <img src={`${basePath}${anuncio.imageUrl}`} alt={anuncio.title} className="rounded-lg mb-2" onError={(e) => { e.target.onerror = null; e.target.src='https://placehold.co/400x400/ef4444/ffffff?text=Imagem+Indisponível'; }}/>
               <h4 className="font-semibold text-gray-800">{anuncio.title}</h4>
               <p className="text-sm text-gray-600 mb-2 whitespace-pre-wrap">{anuncio.text}</p>
               <a href={anuncio.link} target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-brand-primary hover:underline">
