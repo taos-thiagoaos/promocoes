@@ -12,9 +12,9 @@ const nextConfig = {
     unoptimized: true,
     domains: ['placehold.co'],
   },
-  // Expondo o basePath para ser acessível no lado do cliente
-  publicRuntimeConfig: {
-    basePath: isProd ? repoName : '',
+  // Expondo o basePath como uma variável de ambiente para o cliente
+  env: {
+    NEXT_PUBLIC_BASE_PATH: isProd ? repoName : '',
   },
 };
 

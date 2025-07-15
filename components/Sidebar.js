@@ -1,8 +1,6 @@
 import Link from 'next/link';
-import getConfig from 'next/config';
 
-const { publicRuntimeConfig } = getConfig();
-const basePath = publicRuntimeConfig.basePath || '';
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
 export default function Sidebar({ links, anuncios, stores }) {
   return (
