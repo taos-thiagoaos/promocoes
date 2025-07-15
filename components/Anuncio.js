@@ -1,9 +1,24 @@
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { useState, useEffect } from 'react';
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
 export default function Anuncio({ promo }) {
+  const [formattedDate, setFormattedDate] = useState('');
+
+  // Formata a data no lado do cliente para evitar erros de hidratação.
+  // Isso garante que não haverá mismatch entre o servidor e o cliente.
+  useEffect(() => {
+    try {
+      setFormattedDate(format(new Date(promo.date), "dd 'de' MMMM 'de' yyyy", { locale: ptBR }));
+    } catch (e) {
+      // Em caso de data inválida, mostra a data original.
+      console.error("Data inválida:", promo.date);
+      setFormattedDate(promo.date);
+    }
+  }, [promo.date]);
+
   const handleCouponCopy = (coupon, event) => {
     try {
       navigator.clipboard.writeText(coupon);
@@ -30,9 +45,12 @@ export default function Anuncio({ promo }) {
             <h2 className="block mt-1 text-2xl leading-tight font-bold text-black hover:underline">{promo.title}</h2>
           </a>
           <p className="mt-2 text-gray-600 whitespace-pre-wrap">{promo.text}</p>
-          <p className="mt-4 text-sm text-gray-500">
-            Publicado em: {format(new Date(promo.date), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
-          </p>
+          {/* Renderiza a data apenas quando ela estiver formatada no cliente */}
+          {formattedDate && (
+            <p className="mt-4 text-sm text-gray-500">
+              Publicado em: {formattedDate}
+            </p>
+          )}
         </div>
         <div className="mt-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
           {promo.coupon && (
