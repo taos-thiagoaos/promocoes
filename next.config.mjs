@@ -1,11 +1,15 @@
-/** @type {import('next').NextConfig} */
+const isProd = process.env.NODE_ENV === 'production';
 
+/** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export', // Essencial para exportar como site estático para o GitHub Pages
+  output: 'export',
   reactStrictMode: true,
+  // Adiciona o prefixo do repositório apenas em produção
+  basePath: isProd ? '/promocoes' : undefined,
+  assetPrefix: isProd ? '/promocoes/' : undefined,
   images: {
-    unoptimized: true, // Necessário para o 'next export'
-    domains: ['placehold.co'], // Adicione aqui os domínios das imagens que você vai usar
+    unoptimized: true,
+    domains: ['placehold.co'],
   },
 };
 
