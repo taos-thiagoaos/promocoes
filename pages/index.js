@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Head from 'next/head';
 import Header from '../components/Header';
 import Anuncio from '../components/Anuncio';
 import Sidebar from '../components/Sidebar';
@@ -17,13 +18,24 @@ export default function Home({ allPromos, fixedLinks, fixedAnuncios, aboutData, 
 
   return (
     <div className="min-h-screen bg-surface-100">
+      <Head>
+        <title>Blog Pessoal de Thiago - Promoções</title>
+        <meta name="description" content={aboutData.description} />
+      </Head>
       <Header title={aboutData.title} />
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row">
           <div className="w-full lg:w-3/4">
-            {currentPromos.map((promo) => (
-              <Anuncio key={promo.id} promo={promo} />
-            ))}
+            {currentPromos.length > 0 ? (
+              currentPromos.map((promo) => (
+                <Anuncio key={promo.id} promo={promo} />
+              ))
+            ) : (
+              <div className="bg-white rounded-xl shadow-lg p-8 text-center">
+                <h2 className="text-2xl font-bold">Nenhuma promoção encontrada.</h2>
+                <p className="text-gray-600 mt-2">Volte mais tarde para ver as novidades!</p>
+              </div>
+            )}
             <Paginacao
               currentPage={currentPage}
               totalPages={totalPages}
@@ -37,7 +49,6 @@ export default function Home({ allPromos, fixedLinks, fixedAnuncios, aboutData, 
   );
 }
 
-// Esta função roda no momento do build
 export async function getStaticProps() {
   const allPromos = getAllPromos();
   const fixedLinks = getFixedLinks();

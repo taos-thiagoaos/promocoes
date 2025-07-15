@@ -1,10 +1,14 @@
-// pages/sobre.js
+import Head from 'next/head';
 import Header from '../components/Header';
 import { getAboutData } from '../lib/api';
 
 export default function Sobre({ aboutData }) {
   return (
     <div className="min-h-screen bg-surface-100">
+      <Head>
+        <title>Sobre | Blog Pessoal de Thiago</title>
+        <meta name="description" content={aboutData.description} />
+      </Head>
       <Header title={aboutData.title} />
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white rounded-xl shadow-lg p-8 md:p-12 max-w-4xl mx-auto">

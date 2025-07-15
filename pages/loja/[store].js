@@ -1,5 +1,5 @@
-// pages/loja/[store].js  <-- NOVO ARQUIVO
 import { useState } from 'react';
+import Head from 'next/head';
 import Header from '../../components/Header';
 import Anuncio from '../../components/Anuncio';
 import Sidebar from '../../components/Sidebar';
@@ -18,6 +18,10 @@ export default function StorePage({ promos, fixedLinks, fixedAnuncios, aboutData
 
   return (
     <div className="min-h-screen bg-surface-100">
+       <Head>
+        <title>Promoções da {storeName} | Blog Pessoal de Thiago</title>
+        <meta name="description" content={`Veja as melhores promoções da loja ${storeName}.`} />
+      </Head>
       <Header title={aboutData.title} />
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row">
