@@ -1,0 +1,59 @@
+name: Build and Deploy to GitHub Pages
+
+# Executa este workflow em qualquer push para a branch 'main'
+on:
+  push:
+    branches: [ "main" ]
+  # Permite que você rode este workflow manualmente pela aba Actions do GitHub
+  workflow_dispatch:
+
+# Define as permissões necessárias para o job de deploy
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Define as configurações de concorrência para evitar deploys simultâneos
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Baixa o código do seu repositório
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2. Configura o ambiente Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20" # Use uma versão LTS do Node.js
+          cache: 'npm'
+
+      # 3. Instala as dependências do projeto
+      - name: Install Dependencies
+        run: npm install
+
+      # 4. Constrói a aplicação Next.js e exporta para arquivos estáticos
+      # O comando 'npm run export' executa 'next build && next export'
+      # A pasta 'out' será criada com o site estático
+      - name: Build and Export
+        run: npm run export
+
+      # 5. Adiciona um arquivo .nojekyll para evitar problemas com o GitHub Pages
+      - name: Add .nojekyll file
+        run: touch out/.nojekyll
+
+      # 6. Faz o upload do artefato (a pasta 'out') para o GitHub Pages
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./out
+
+      # 7. Faz o deploy do artefato no GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
