@@ -8,7 +8,7 @@ import { getPromosByStore, getFixedLinks, getFixedAnuncios, getAboutData, getAll
 
 const PROMOS_PER_PAGE = 20;
 
-export default function StorePage({ promos, fixedLinks, fixedAnuncios, aboutData, stores, storeName }) {
+export default function StorePage({ promos, fixedLinks, fixedAnuncios, aboutData, stores, storeName, pageImage }) {
   const [currentPage, setCurrentPage] = useState(1);
 
   const totalPages = Math.ceil(promos.length / PROMOS_PER_PAGE);
@@ -16,11 +16,21 @@ export default function StorePage({ promos, fixedLinks, fixedAnuncios, aboutData
   const endIndex = startIndex + PROMOS_PER_PAGE;
   const currentPromos = promos.slice(startIndex, endIndex);
 
+  const siteUrl = "https://taos-thiagoaos.github.io/promocoes";
+  const pageTitle = `Promoções da ${storeName} | Blog Pessoal de Thiago`;
+  const pageDescription = `Veja as melhores promoções da loja ${storeName}.`;
+  const imageUrl = `${siteUrl}${pageImage}`;
+
   return (
     <div className="min-h-screen bg-surface-100">
        <Head>
-        <title>Promoções da {storeName} | Blog Pessoal de Thiago</title>
-        <meta name="description" content={`Veja as melhores promoções da loja ${storeName}.`} />
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDescription} />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDescription} />
+        <meta property="og:image" content={imageUrl} />
+        <meta property="og:url" content={`${siteUrl}/loja/${storeName}`} />
+        <meta property="twitter:card" content="summary_large_image" />
       </Head>
       <Header title={aboutData.title} />
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -66,6 +76,9 @@ export async function getStaticProps({ params }) {
   const fixedAnuncios = getFixedAnuncios();
   const aboutData = getAboutData();
   const allStores = getAllStores();
+  
+  // Pega a imagem da primeira promoção da loja ou usa uma padrão
+  const pageImage = promos.length > 0 ? promos[0].imageUrl : '/images/default-og-image.png';
 
   return {
     props: {
@@ -75,6 +88,7 @@ export async function getStaticProps({ params }) {
       aboutData,
       stores: allStores,
       storeName: params.store,
+      pageImage,
     },
   };
 }

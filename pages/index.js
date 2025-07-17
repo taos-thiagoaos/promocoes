@@ -8,19 +8,27 @@ import { getAllPromos, getFixedLinks, getFixedAnuncios, getAboutData, getAllStor
 
 const PROMOS_PER_PAGE = 20;
 
-export default function Home({ allPromos, fixedLinks, fixedAnuncios, aboutData, stores }) {
+export default function Home({ allPromos, fixedLinks, fixedAnuncios, aboutData, stores, pageImage }) {
   const [currentPage, setCurrentPage] = useState(1);
 
   const totalPages = Math.ceil(allPromos.length / PROMOS_PER_PAGE);
   const startIndex = (currentPage - 1) * PROMOS_PER_PAGE;
   const endIndex = startIndex + PROMOS_PER_PAGE;
   const currentPromos = allPromos.slice(startIndex, endIndex);
+  
+  const siteUrl = "https://taos-thiagoaos.github.io/promocoes";
+  const imageUrl = `${siteUrl}${pageImage}`;
 
   return (
     <div className="min-h-screen bg-surface-100">
       <Head>
         <title>Blog Pessoal de Thiago - Promoções</title>
         <meta name="description" content={aboutData.description} />
+        <meta property="og:title" content="Blog Pessoal de Thiago - Promoções" />
+        <meta property="og:description" content={aboutData.description} />
+        <meta property="og:image" content={imageUrl} />
+        <meta property="og:url" content={siteUrl} />
+        <meta property="twitter:card" content="summary_large_image" />
       </Head>
       <Header title={aboutData.title} />
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">

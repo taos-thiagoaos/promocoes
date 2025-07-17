@@ -2,12 +2,20 @@ import Head from 'next/head';
 import Header from '../components/Header';
 import { getAboutData } from '../lib/api';
 
-export default function Sobre({ aboutData }) {
+export default function Sobre({ aboutData, pageImage }) {
+  const siteUrl = "https://taos-thiagoaos.github.io/promocoes";
+  const imageUrl = `${siteUrl}${pageImage}`;
+
   return (
     <div className="min-h-screen bg-surface-100">
       <Head>
         <title>Sobre | Blog Pessoal de Thiago</title>
         <meta name="description" content={aboutData.description} />
+        <meta property="og:title" content="Sobre | Blog Pessoal de Thiago" />
+        <meta property="og:description" content={aboutData.description} />
+        <meta property="og:image" content={imageUrl} />
+        <meta property="og:url" content={siteUrl} />
+        <meta property="twitter:card" content="summary_large_image" />
       </Head>
       <Header title={aboutData.title} />
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -41,9 +49,12 @@ export default function Sobre({ aboutData }) {
 
 export async function getStaticProps() {
   const aboutData = getAboutData();
+  const pageImage = '/images/default-og-image.png';
+
   return {
     props: {
       aboutData,
+      pageImage,
     },
   };
 }
