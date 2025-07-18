@@ -1,11 +1,21 @@
 [
-    {
+  {
     "id": "oleo-elseve-extraordinario",
     "title": "Óleo Extraordinário Elseve – L'Oréal Paris",
     "date": "2025-07-17",
     "text": "💛 Óleo Extraordinário Elseve – L'Oréal Paris\nEsse é um must have, serve até para barba. Vale cada centavo.\n\n🌸 Nutrição profunda com 6 óleos de flores preciosas\n💧 Hidrata sem pesar e dá brilho instantâneo\n✨ Ação anti-frizz + proteção térmica até 230°C\n💨 Pode usar no cabelo seco ou molhado\n👩‍🦰 Ideal para todos os tipos de cabelo\n\n➡️ Use antes da escova, como finalizador ou a qualquer hora para domar os fios!\n\n🔥 PROMOÇÃO: só R$30,94!\n",
     "link": "https://amzn.to/4nVRKQN",
     "imageUrl": "/images/loreal-elseve.jpeg",
+    "coupon": null,
+    "store": "Amazon"
+  },
+  {
+    "id": "garrafa-termica-contigo",
+    "title": "Garrafa Térmica Contigo Matterhorn 591ml",
+    "date": "2025-07-17",
+    "text": "🚨 OFERTA IMPERDÍVEL! 🚨\n🧊 Garrafa Térmica Contigo Matterhorn 591ml\n💥 Mantém a bebida gelada por até 24h ou quente por 10h com tecnologia Thermalock Vacuum Insulation!\n\n✅ Vedação à prova de vazamentos\n✅ Cabe no porta-copos do carro\n✅ Bocal largo (ideal p/ cubos de gelo 🧊)\n✅ Livre de BPA\n✅ Perfeita p/ academia, escritório, trilhas, praia 🏖️🏕️\n\n🧼 Fácil de limpar (lavar à mão)\n\n🎯 Qualidade Contigo pra sua rotina!",
+    "link": "https://amzn.to/4lZB74X",
+    "imageUrl": "/images/garrafa-contigo.jpg",
     "coupon": null,
     "store": "Amazon"
   }
