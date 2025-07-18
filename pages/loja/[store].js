@@ -55,10 +55,7 @@ export default function StorePage({ promos, fixedLinks, fixedAnuncios, aboutData
 
 export async function getStaticPaths() {
   const stores = getAllStores();
-  const paths = stores.map((store) => ({
-    params: { store: store.toLowerCase() },
-  }));
-
+  const paths = stores.map((store) => ({ params: { store: store.toLowerCase() } }));
   return { paths, fallback: false };
 }
 

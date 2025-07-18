@@ -23,7 +23,6 @@ export default function AnuncioPage({ promo, suggested, fixedLinks, fixedAnuncio
         url: pageUrl,
       }).catch(console.error);
     } else {
-      // Fallback para copiar o link
       navigator.clipboard.writeText(pageUrl);
       alert('Link copiado para a área de transferência!');
     }
@@ -50,7 +49,6 @@ export default function AnuncioPage({ promo, suggested, fixedLinks, fixedAnuncio
                 <span>🔗</span> Compartilhar
               </button>
             </div>
-            {/* Seção de Sugestões */}
             {suggested && suggested.length > 0 && (
               <div className="mt-12">
                 <h2 className="text-3xl font-bold mb-6 border-b pb-4">Veja também</h2>
