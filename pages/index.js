@@ -5,6 +5,7 @@ import Anuncio from '../components/Anuncio';
 import Sidebar from '../components/Sidebar';
 import Paginacao from '../components/Paginacao';
 import { getAllPromos, getFixedLinks, getFixedAnuncios, getAboutData, getAllStores } from '../lib/api';
+import { SITE_URL, SITE_TITLE } from '../config';
 
 const PROMOS_PER_PAGE = 20;
 
@@ -16,18 +17,18 @@ export default function Home({ allPromos, fixedLinks, fixedAnuncios, aboutData, 
   const endIndex = startIndex + PROMOS_PER_PAGE;
   const currentPromos = allPromos.slice(startIndex, endIndex);
   
-  const siteUrl = "https://taos-thiagoaos.github.io/promocoes";
-  const imageUrl = `${siteUrl}${pageImage}`;
+  const imageUrl = `${SITE_URL}${pageImage}`;
+  const pageTitle = `${SITE_TITLE} - Promoções`;
 
   return (
     <div className="min-h-screen bg-surface-100">
       <Head>
-        <title>Blog Pessoal de Thiago - Promoções</title>
+        <title>{pageTitle}</title>
         <meta name="description" content={aboutData.description} />
-        <meta property="og:title" content="Blog Pessoal de Thiago - Promoções" />
+        <meta property="og:title" content={pageTitle} />
         <meta property="og:description" content={aboutData.description} />
         <meta property="og:image" content={imageUrl} />
-        <meta property="og:url" content={siteUrl} />
+        <meta property="og:url" content={SITE_URL} />
         <meta property="twitter:card" content="summary_large_image" />
       </Head>
       <Header title={aboutData.title} />
@@ -58,21 +59,15 @@ export default function Home({ allPromos, fixedLinks, fixedAnuncios, aboutData, 
 }
 
 export async function getStaticProps() {
-  const allPromos = getAllPromos();
-  const fixedLinks = getFixedLinks();
-  const fixedAnuncios = getFixedAnuncios();
-  const aboutData = getAboutData();
-  const stores = getAllStores();
-  
   const pageImage = '/images/default-og-image.png';
 
   return {
     props: {
-      allPromos,
-      fixedLinks,
-      fixedAnuncios,
-      aboutData,
-      stores,
+      allPromos: getAllPromos(),
+      fixedLinks: getFixedLinks(),
+      fixedAnuncios: getFixedAnuncios(),
+      aboutData: getAboutData(),
+      stores: getAllStores(),
       pageImage,
     },
   };

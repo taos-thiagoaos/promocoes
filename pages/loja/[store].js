@@ -5,6 +5,7 @@ import Anuncio from '../../components/Anuncio';
 import Sidebar from '../../components/Sidebar';
 import Paginacao from '../../components/Paginacao';
 import { getPromosByStore, getFixedLinks, getFixedAnuncios, getAboutData, getAllStores } from '../../lib/api';
+import { SITE_URL, SITE_TITLE } from '../../config';
 
 const PROMOS_PER_PAGE = 20;
 
@@ -16,10 +17,9 @@ export default function StorePage({ promos, fixedLinks, fixedAnuncios, aboutData
   const endIndex = startIndex + PROMOS_PER_PAGE;
   const currentPromos = promos.slice(startIndex, endIndex);
 
-  const siteUrl = "https://taos-thiagoaos.github.io/promocoes";
-  const pageTitle = `Promoções da ${storeName} | Blog Pessoal de Thiago`;
+  const pageTitle = `Promoções da ${storeName} | ${SITE_TITLE}`;
   const pageDescription = `Veja as melhores promoções da loja ${storeName}.`;
-  const imageUrl = `${siteUrl}${pageImage}`;
+  const imageUrl = `${SITE_URL}${pageImage}`;
 
   return (
     <div className="min-h-screen bg-surface-100">
@@ -29,30 +29,22 @@ export default function StorePage({ promos, fixedLinks, fixedAnuncios, aboutData
         <meta property="og:title" content={pageTitle} />
         <meta property="og:description" content={pageDescription} />
         <meta property="og:image" content={imageUrl} />
-        <meta property="og:url" content={`${siteUrl}/loja/${storeName}`} />
+        <meta property="og:url" content={`${SITE_URL}/loja/${storeName}`} />
         <meta property="twitter:card" content="summary_large_image" />
       </Head>
       <Header title={aboutData.title} />
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row">
           <div className="w-full lg:w-3/4">
-            <h1 className="text-3xl font-bold mb-6 border-b pb-4">
-              Promoções da Loja: <span className="text-brand-primary capitalize">{storeName}</span>
-            </h1>
+            <h1 className="text-3xl font-bold mb-6 border-b pb-4">Promoções da Loja: <span className="text-brand-primary capitalize">{storeName}</span></h1>
             {currentPromos.length > 0 ? (
-              currentPromos.map((promo) => (
-                <Anuncio key={promo.id} promo={promo} />
-              ))
+              currentPromos.map((promo) => (<Anuncio key={promo.id} promo={promo} />))
             ) : (
               <div className="bg-white rounded-xl shadow-lg p-8 text-center">
                 <h2 className="text-2xl font-bold">Nenhuma promoção encontrada para esta loja.</h2>
               </div>
             )}
-            <Paginacao
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={setCurrentPage}
-            />
+            <Paginacao currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
           </div>
           <Sidebar links={fixedLinks} anuncios={fixedAnuncios} stores={stores} />
         </div>
@@ -72,20 +64,15 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }) {
   const promos = getPromosByStore(params.store);
-  const fixedLinks = getFixedLinks();
-  const fixedAnuncios = getFixedAnuncios();
-  const aboutData = getAboutData();
-  const allStores = getAllStores();
-  
   const pageImage = promos.length > 0 ? promos[0].imageUrl : '/images/default-og-image.png';
 
   return {
     props: {
       promos,
-      fixedLinks,
-      fixedAnuncios,
-      aboutData,
-      stores: allStores,
+      fixedLinks: getFixedLinks(),
+      fixedAnuncios: getFixedAnuncios(),
+      aboutData: getAboutData(),
+      stores: getAllStores(),
       storeName: params.store,
       pageImage,
     },

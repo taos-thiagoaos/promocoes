@@ -3,10 +3,7 @@ import Link from 'next/link';
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
 export default function Sidebar({ links, anuncios, stores }) {
-  // Função para substituir \n por <br /> para renderização de HTML
-  const createMarkup = (text) => {
-    return { __html: text.replace(/\n/g, '<br />') };
-  };
+  const createMarkup = (text) => ({ __html: text ? text.replace(/\n/g, '<br />') : '' });
   
   return (
     <aside className="w-full lg:w-1/4 lg:pl-8 mt-8 lg:mt-0">

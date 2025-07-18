@@ -1,11 +1,13 @@
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { isDev } from '../lib/helpers';
+import { DATE_FORMAT } from '../config';
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
-const isDev = process.env.NODE_ENV === 'development';
 
-export default function Anuncio({ promo }) {
+export default function Anuncio({ promo, isDetailPage = false }) {
   const [formattedDate, setFormattedDate] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [generatedText, setGeneratedText] = useState('');
@@ -14,7 +16,7 @@ export default function Anuncio({ promo }) {
 
   useEffect(() => {
     try {
-      setFormattedDate(format(new Date(promo.date), "dd 'de' MMMM 'de' yyyy", { locale: ptBR }));
+      setFormattedDate(format(new Date(promo.date), DATE_FORMAT, { locale: ptBR }));
     } catch (e) {
       console.error("Data inválida:", promo.date);
       setFormattedDate(promo.date);
@@ -45,18 +47,12 @@ export default function Anuncio({ promo }) {
       const response = await fetch('/api/generate-text', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: promo.title, text: promo.text }),
+        body: JSON.stringify({ title: promo.title }),
       });
-
       const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Erro desconhecido');
-      }
-
+      if (!response.ok) throw new Error(data.error || 'Erro desconhecido');
       setGeneratedText(data.text);
     } catch (e) {
-      console.error("Erro ao gerar texto com IA:", e);
       setError(e.message);
     } finally {
       setIsLoading(false);
@@ -72,33 +68,22 @@ export default function Anuncio({ promo }) {
       const response = await fetch('/api/update-promo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          id: promo.id, 
-          date: promo.date,
-          newText: generatedText 
-        }),
+        body: JSON.stringify({ id: promo.id, date: promo.date, newText: generatedText }),
       });
-
       const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Erro ao atualizar arquivo.');
-      }
-      
+      if (!response.ok) throw new Error(data.error || 'Erro ao atualizar arquivo.');
       setUpdateSuccess(data.message);
-      // Opcional: recarregar a página para ver a mudança refletida se a fonte de dados for lida novamente.
-      // window.location.reload();
+      setTimeout(() => window.location.reload(), 1500);
     } catch (e) {
-      console.error("Erro ao substituir texto:", e);
       setError(e.message);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const createMarkup = (text) => {
-    return { __html: text.replace(/\n/g, '<br />') };
-  };
+  const createMarkup = (text) => ({ __html: text ? text.replace(/\n/g, '<br />') : '' });
+
+  const TitleComponent = isDetailPage ? 'h1' : 'h2';
 
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col md:flex-row mb-8 transition-shadow duration-300 hover:shadow-2xl">
@@ -108,9 +93,11 @@ export default function Anuncio({ promo }) {
       <div className="p-6 md:p-8 flex-1 flex flex-col justify-between">
         <div>
           <div className="uppercase tracking-wide text-sm text-brand-primary font-semibold">{promo.store}</div>
-          <a href={promo.link} target="_blank" rel="noopener noreferrer">
-            <h2 className="block mt-1 text-2xl leading-tight font-bold text-black hover:underline">{promo.title}</h2>
-          </a>
+          <Link href={`/anuncios/${promo.date}/${promo.slug}`} passHref>
+            <TitleComponent className="block mt-1 text-2xl leading-tight font-bold text-black hover:underline">
+              {promo.title}
+            </TitleComponent>
+          </Link>
           <p className="mt-2 text-gray-600" dangerouslySetInnerHTML={createMarkup(promo.text)} />
           {formattedDate && (
             <p className="mt-4 text-sm text-gray-500">
@@ -135,7 +122,6 @@ export default function Anuncio({ promo }) {
             <a href={promo.link} target="_blank" rel="noopener noreferrer" className="btn btn-primary">
               Ver Promoção
             </a>
-            {/* Botão de IA visível apenas em desenvolvimento */}
             {isDev && (
               <button onClick={handleGenerateText} disabled={isLoading} className="btn btn-secondary flex items-center justify-center gap-2 disabled:opacity-50">
                 ✨ {isLoading ? 'Gerando...' : 'Gerar Texto com IA'}

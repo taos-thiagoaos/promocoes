@@ -1,20 +1,21 @@
 import Head from 'next/head';
 import Header from '../components/Header';
 import { getAboutData } from '../lib/api';
+import { SITE_URL, SITE_TITLE } from '../config';
 
 export default function Sobre({ aboutData, pageImage }) {
-  const siteUrl = "https://taos-thiagoaos.github.io/promocoes";
-  const imageUrl = `${siteUrl}${pageImage}`;
+  const imageUrl = `${SITE_URL}${pageImage}`;
+  const pageTitle = `Sobre | ${SITE_TITLE}`;
 
   return (
     <div className="min-h-screen bg-surface-100">
       <Head>
-        <title>Sobre | Blog Pessoal de Thiago</title>
+        <title>{pageTitle}</title>
         <meta name="description" content={aboutData.description} />
-        <meta property="og:title" content="Sobre | Blog Pessoal de Thiago" />
+        <meta property="og:title" content={pageTitle} />
         <meta property="og:description" content={aboutData.description} />
         <meta property="og:image" content={imageUrl} />
-        <meta property="og:url" content={siteUrl} />
+        <meta property="og:url" content={`${SITE_URL}/sobre`} />
         <meta property="twitter:card" content="summary_large_image" />
       </Head>
       <Header title={aboutData.title} />
@@ -27,16 +28,12 @@ export default function Sobre({ aboutData, pageImage }) {
             <ul className="space-y-3">
               {aboutData.instagramUrl && (
                 <li>
-                  <a href={aboutData.instagramUrl} target="_blank" rel="noopener noreferrer" className="font-medium text-brand-primary hover:text-brand-secondary">
-                    📷 Instagram
-                  </a>
+                  <a href={aboutData.instagramUrl} target="_blank" rel="noopener noreferrer" className="font-medium text-brand-primary hover:text-brand-secondary">📷 Instagram</a>
                 </li>
               )}
               {aboutData.amazonUrl && (
                 <li>
-                  <a href={aboutData.amazonUrl} target="_blank" rel="noopener noreferrer" className="font-medium text-brand-primary hover:text-brand-secondary">
-                    🛒 Minha Página de Produtos na Amazon
-                  </a>
+                  <a href={aboutData.amazonUrl} target="_blank" rel="noopener noreferrer" className="font-medium text-brand-primary hover:text-brand-secondary">🛒 Minha Página de Produtos na Amazon</a>
                 </li>
               )}
             </ul>
@@ -48,13 +45,6 @@ export default function Sobre({ aboutData, pageImage }) {
 }
 
 export async function getStaticProps() {
-  const aboutData = getAboutData();
   const pageImage = '/images/default-og-image.png';
-
-  return {
-    props: {
-      aboutData,
-      pageImage,
-    },
-  };
+  return { props: { aboutData: getAboutData(), pageImage } };
 }
