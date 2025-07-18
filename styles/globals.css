@@ -16,4 +16,7 @@ body {
   .btn-secondary {
     @apply bg-slate-200 text-slate-800 hover:bg-slate-300 focus:ring-slate-400;
   }
+  .btn-success {
+    @apply bg-emerald-500 text-white hover:bg-emerald-600 focus:ring-emerald-400;
+  }
 }

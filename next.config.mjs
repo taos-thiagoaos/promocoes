@@ -3,16 +3,15 @@ const repoName = '/promocoes';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
+  // A configuração 'output' agora é condicional
+  output: isProd ? 'export' : undefined,
   reactStrictMode: true,
-  // Adiciona o prefixo do repositório apenas em produção
   basePath: isProd ? repoName : undefined,
   assetPrefix: isProd ? repoName + '/' : undefined,
   images: {
     unoptimized: true,
     domains: ['placehold.co'],
   },
-  // Expondo o basePath como uma variável de ambiente para o cliente
   env: {
     NEXT_PUBLIC_BASE_PATH: isProd ? repoName : '',
   },

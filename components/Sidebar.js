@@ -3,6 +3,11 @@ import Link from 'next/link';
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
 export default function Sidebar({ links, anuncios, stores }) {
+  // Função para substituir \n por <br /> para renderização de HTML
+  const createMarkup = (text) => {
+    return { __html: text.replace(/\n/g, '<br />') };
+  };
+  
   return (
     <aside className="w-full lg:w-1/4 lg:pl-8 mt-8 lg:mt-0">
       <div className="sticky top-8">
@@ -13,7 +18,7 @@ export default function Sidebar({ links, anuncios, stores }) {
             <div key={anuncio.id} className="mb-4 last:mb-0">
               <img src={`${basePath}${anuncio.imageUrl}`} alt={anuncio.title} className="rounded-lg mb-2" onError={(e) => { e.target.onerror = null; e.target.src='https://placehold.co/400x400/ef4444/ffffff?text=Imagem+Indisponível'; }}/>
               <h4 className="font-semibold text-gray-800">{anuncio.title}</h4>
-              <p className="text-sm text-gray-600 mb-2 whitespace-pre-wrap">{anuncio.text}</p>
+              <p className="text-sm text-gray-600 mb-2" dangerouslySetInnerHTML={createMarkup(anuncio.text)} />
               <a href={anuncio.link} target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-brand-primary hover:underline">
                 Ver agora &rarr;
               </a>

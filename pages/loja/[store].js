@@ -77,7 +77,6 @@ export async function getStaticProps({ params }) {
   const aboutData = getAboutData();
   const allStores = getAllStores();
   
-  // Pega a imagem da primeira promoção da loja ou usa uma padrão
   const pageImage = promos.length > 0 ? promos[0].imageUrl : '/images/default-og-image.png';
 
   return {

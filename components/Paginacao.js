@@ -1,4 +1,6 @@
 export default function Paginacao({ currentPage, totalPages, onPageChange }) {
+    if (totalPages <= 1) return null;
+
     const pageNumbers = [];
     for (let i = 1; i <= totalPages; i++) {
         pageNumbers.push(i);

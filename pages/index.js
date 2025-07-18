@@ -63,6 +63,8 @@ export async function getStaticProps() {
   const fixedAnuncios = getFixedAnuncios();
   const aboutData = getAboutData();
   const stores = getAllStores();
+  
+  const pageImage = '/images/default-og-image.png';
 
   return {
     props: {
@@ -71,6 +73,7 @@ export async function getStaticProps() {
       fixedAnuncios,
       aboutData,
       stores,
+      pageImage,
     },
   };
 }
