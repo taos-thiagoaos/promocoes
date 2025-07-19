@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Head from 'next/head';
 import Header from '../components/Header';
 import Anuncio from '../components/Anuncio';
@@ -6,11 +6,15 @@ import Sidebar from '../components/Sidebar';
 import Paginacao from '../components/Paginacao';
 import { getAllPromos, getFixedLinks, getFixedAnuncios, getAboutData, getAllStores } from '../lib/api';
 import { SITE_URL, SITE_TITLE } from '../config';
+import { AnuncioModel } from '../models/AnuncioModel';
 
 const PROMOS_PER_PAGE = 20;
 
-export default function Home({ allPromos, fixedLinks, fixedAnuncios, aboutData, stores, pageImage }) {
+export default function Home({ allPromos: allPromosData, fixedLinks, fixedAnuncios, aboutData, stores, pageImage }) {
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Re-hidrata os dados brutos em instâncias do modelo, usando useMemo para performance
+  const allPromos = useMemo(() => allPromosData.map(p => new AnuncioModel(p)), [allPromosData]);
 
   const totalPages = Math.ceil(allPromos.length / PROMOS_PER_PAGE);
   const startIndex = (currentPage - 1) * PROMOS_PER_PAGE;
@@ -59,11 +63,13 @@ export default function Home({ allPromos, fixedLinks, fixedAnuncios, aboutData, 
 }
 
 export async function getStaticProps() {
+  const allPromos = getAllPromos();
   const pageImage = '/images/default-og-image.png';
 
   return {
     props: {
-      allPromos: getAllPromos(),
+      // Serializa os dados para o cliente
+      allPromos: JSON.parse(JSON.stringify(allPromos)),
       fixedLinks: getFixedLinks(),
       fixedAnuncios: getFixedAnuncios(),
       aboutData: getAboutData(),

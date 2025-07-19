@@ -3,7 +3,8 @@ import { ptBR } from 'date-fns/locale';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { isDev } from '../lib/helpers';
-import { DATE_FORMAT, SITE_URL } from '../config';
+import { DATE_FORMAT } from '../config';
+import { generateText, updatePromoText, optimizePromoImage } from '../services/devApi';
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
@@ -25,16 +26,15 @@ export default function Anuncio({ promo, isDetailPage = false }) {
 
   const handleShare = (e) => {
     e.preventDefault();
-    e.stopPropagation(); // Impede que o clique no botão de compartilhar acione o link do título
-    const pageUrl = `${SITE_URL}/anuncios/${promo.date}/${promo.slug}`;
+    e.stopPropagation();
     if (navigator.share) {
       navigator.share({
         title: promo.title,
         text: `Confira esta promoção: ${promo.title}`,
-        url: pageUrl,
+        url: promo.shareUrl,
       }).catch(console.error);
     } else {
-      navigator.clipboard.writeText(pageUrl);
+      navigator.clipboard.writeText(promo.shareUrl);
       alert('Link copiado para a área de transferência!');
     }
   };
@@ -58,15 +58,8 @@ export default function Anuncio({ promo, isDetailPage = false }) {
     setGeneratedText('');
     setError('');
     setUpdateSuccess('');
-
     try {
-      const response = await fetch('/api/generate-text', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: promo.title }),
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Erro desconhecido');
+      const data = await generateText(promo.title);
       setGeneratedText(data.text);
     } catch (e) {
       setError(e.message);
@@ -79,15 +72,8 @@ export default function Anuncio({ promo, isDetailPage = false }) {
     setIsLoading(true);
     setError('');
     setUpdateSuccess('');
-
     try {
-      const response = await fetch('/api/update-promo', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: promo.id, date: promo.date, newText: generatedText }),
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Erro ao atualizar arquivo.');
+      const data = await updatePromoText({ id: promo.id, date: promo.date, newText: generatedText });
       setUpdateSuccess(data.message);
       setTimeout(() => window.location.reload(), 1500);
     } catch (e) {
@@ -102,13 +88,7 @@ export default function Anuncio({ promo, isDetailPage = false }) {
     setError('');
     setUpdateSuccess('');
     try {
-      const response = await fetch('/api/optimize-image', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ imageUrl: promo.imageUrl }),
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Erro ao otimizar imagem.');
+      const data = await optimizePromoImage({ imageUrl: promo.imageUrl });
       setUpdateSuccess(data.message);
       setTimeout(() => window.location.reload(), 1500);
     } catch (e) {
@@ -136,7 +116,7 @@ export default function Anuncio({ promo, isDetailPage = false }) {
       <div className="p-6 md:p-8 flex-1 flex flex-col justify-between">
         <div>
           <div className="uppercase tracking-wide text-sm text-brand-primary font-semibold">{promo.store}</div>
-          <Link href={`/anuncios/${promo.date}/${promo.slug}`} className="pr-10">
+          <Link href={promo.internalLink} className="pr-10">
             <TitleComponent className="block mt-1 text-2xl leading-tight font-bold text-black hover:underline">
               {promo.title}
             </TitleComponent>
