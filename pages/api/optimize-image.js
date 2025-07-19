@@ -35,9 +35,6 @@ export default async function handler(req, res) {
       .toBuffer();
 
     // Sobrescreve o arquivo original com a versão otimizada
-    // Nota: A extensão do arquivo não muda, mas o conteúdo agora é WebP.
-    // Isso é aceitável para a web, mas se preferir, pode-se alterar a lógica para salvar com .webp
-    // e atualizar o JSON, o que seria mais complexo.
     await fs.writeFile(imagePath, optimizedBuffer);
 
     return res.status(200).json({ message: 'Imagem otimizada com sucesso!' });

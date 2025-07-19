@@ -15,19 +15,6 @@ export default function AnuncioPage({ promo, suggested, fixedLinks, fixedAnuncio
   const pageUrl = `${SITE_URL}/anuncios/${promo.date}/${promo.slug}`;
   const imageUrl = `${SITE_URL}${promo.imageUrl}`;
 
-  const handleShare = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: promo.title,
-        text: `Confira esta promoção: ${promo.title}`,
-        url: pageUrl,
-      }).catch(console.error);
-    } else {
-      navigator.clipboard.writeText(pageUrl);
-      alert('Link copiado para a área de transferência!');
-    }
-  };
-
   return (
     <div className="min-h-screen bg-surface-100">
       <Head>
@@ -44,11 +31,6 @@ export default function AnuncioPage({ promo, suggested, fixedLinks, fixedAnuncio
         <div className="flex flex-col lg:flex-row">
           <div className="w-full lg:w-3/4">
             <Anuncio promo={promo} isDetailPage={true} />
-            <div className="mt-8 flex justify-end">
-              <button onClick={handleShare} className="btn btn-secondary flex items-center gap-2">
-                <span>🔗</span> Compartilhar
-              </button>
-            </div>
             {suggested && suggested.length > 0 && (
               <div className="mt-12">
                 <h2 className="text-3xl font-bold mb-6 border-b pb-4">Veja também</h2>
