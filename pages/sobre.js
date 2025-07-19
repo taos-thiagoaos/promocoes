@@ -21,7 +21,6 @@ export default function Sobre({ aboutData, pageImage }) {
       <Header title={aboutData.title} />
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white rounded-xl shadow-lg p-8 md:p-12 max-w-4xl mx-auto">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">{aboutData.title || "Sobre"}</h1>
           <p className="text-lg text-gray-700 mb-6 whitespace-pre-wrap">{aboutData.description || "Descrição não encontrada."}</p>
           <div className="border-t pt-6">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">Meus Links</h2>
