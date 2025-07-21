@@ -14,7 +14,8 @@
     "next": "14.2.4",
     "next-auth": "^4.24.7",
     "gray-matter": "^4.0.3",
-    "date-fns": "^3.6.0"
+    "date-fns": "^3.6.0",
+    "@octokit/rest": "^21.0.0"
   },
   "devDependencies": {
     "postcss": "^8",
