@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Head from 'next/head';
 import Header from '../../components/Header';
 import Anuncio from '../../components/Anuncio';
@@ -6,11 +6,14 @@ import Sidebar from '../../components/Sidebar';
 import Paginacao from '../../components/Paginacao';
 import { getPromosByStore, getFixedLinks, getFixedAnuncios, getAboutData, getAllStores } from '../../lib/api';
 import { SITE_URL, SITE_TITLE } from '../../config';
+import { AnuncioModel } from '../../models/AnuncioModel';
 
 const PROMOS_PER_PAGE = 20;
 
-export default function StorePage({ promos, fixedLinks, fixedAnuncios, aboutData, stores, storeName, pageImage }) {
+export default function StorePage({ promos: promosData, fixedLinks, fixedAnuncios, aboutData, stores, storeName, pageImage }) {
   const [currentPage, setCurrentPage] = useState(1);
+
+  const promos = useMemo(() => promosData.map(p => new AnuncioModel(p)), [promosData]);
 
   const totalPages = Math.ceil(promos.length / PROMOS_PER_PAGE);
   const startIndex = (currentPage - 1) * PROMOS_PER_PAGE;
@@ -65,7 +68,7 @@ export async function getStaticProps({ params }) {
 
   return {
     props: {
-      promos,
+      promos: JSON.parse(JSON.stringify(promos)), //trick to transform model to plain object
       fixedLinks: getFixedLinks(),
       fixedAnuncios: getFixedAnuncios(),
       aboutData: getAboutData(),
