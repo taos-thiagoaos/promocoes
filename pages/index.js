@@ -35,7 +35,7 @@ export default function Home({ allPromos: allPromosData, fixedLinks, fixedAnunci
         <meta property="og:url" content={SITE_URL} />
         <meta property="twitter:card" content="summary_large_image" />
       </Head>
-      <Header title={aboutData.title} />
+      <Header title={pageTitle} />
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row">
           <div className="w-full lg:w-3/4">
