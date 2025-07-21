@@ -14,8 +14,7 @@ export class AnuncioModel {
     this.imageUrl = data.imageUrl;
     this.coupon = data.coupon;
     this.store = data.store;
-    // Garante que o slug seja sempre calculado da mesma forma
-    this.slug = slugify(this.title);
+    this.slug = data.slug || slugify(this.title);
   }
 
   /**
