@@ -27,27 +27,27 @@ export const generateText = (title) => {
 };
 
 /**
- * Chama a API para atualizar o texto de uma promoção em seu arquivo JSON.
- * @param {{id: string, date: string, newText: string}} promoData Os dados da promoção a ser atualizada.
- * @returns {Promise<{message: string}>} A mensagem de sucesso.
- */
-export const updatePromoText = ({ id, date, newText }) => {
-  return fetchApi('/api/update-promo', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ id, date, newText }),
-  });
-};
-
-/**
- * Chama a API para otimizar a imagem de uma promoção.
+ * Chama a API para otimizar uma imagem já existente no repositório.
  * @param {{imageUrl: string}} imageData O caminho da imagem.
  * @returns {Promise<{message: string}>} A mensagem de sucesso.
  */
-export const optimizePromoImage = ({ imageUrl }) => {
+export const optimizeRepoImage = ({ imageUrl }) => {
   return fetchApi('/api/optimize-image', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ imageUrl }),
+  });
+};
+
+/**
+ * Chama a API para otimizar uma imagem em formato base64.
+ * @param {string} base64Image A imagem em base64.
+ * @returns {Promise<{optimizedImage: string}>} A imagem otimizada em base64.
+ */
+export const optimizeBase64Image = (base64Image) => {
+  return fetchApi('/api/optimize-base64-image', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ image: base64Image }),
   });
 };

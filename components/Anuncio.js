@@ -4,9 +4,9 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { DATE_FORMAT } from '../config';
-import { generateText, updatePromoText, optimizePromoImage } from '../services/adminApi';
+import { generateText, optimizeRepoImage, optimizeBase64Image } from '../services/adminApi';
 
-export default function Anuncio({ promo, isDetailPage = false }) {
+export default function Anuncio({ promo, isDetailPage = false, isPreview = false, onUpdatePreview }) {
   const { data: session } = useSession();
   const [formattedDate, setFormattedDate] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -16,7 +16,9 @@ export default function Anuncio({ promo, isDetailPage = false }) {
 
   useEffect(() => {
     try {
-      setFormattedDate(format(new Date(promo.date), DATE_FORMAT, { locale: ptBR }));
+      if (promo.date) {
+        setFormattedDate(format(new Date(promo.date), DATE_FORMAT, { locale: ptBR }));
+      }
     } catch (e) {
       console.error("Data inválida:", promo.date);
       setFormattedDate(promo.date);
@@ -54,27 +56,14 @@ export default function Anuncio({ promo, isDetailPage = false }) {
 
   const handleGenerateText = async () => {
     setIsLoading(true);
-    setGeneratedText('');
     setError('');
     setUpdateSuccess('');
     try {
       const data = await generateText(promo.title);
       setGeneratedText(data.text);
-    } catch (e) {
-      setError(e.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleReplaceText = async () => {
-    setIsLoading(true);
-    setError('');
-    setUpdateSuccess('');
-    try {
-      const data = await updatePromoText({ id: promo.id, date: promo.date, newText: generatedText });
-      setUpdateSuccess(data.message);
-      setTimeout(() => window.location.reload(), 1500);
+      if (isPreview) {
+        onUpdatePreview({ text: data.text });
+      }
     } catch (e) {
       setError(e.message);
     } finally {
@@ -87,9 +76,17 @@ export default function Anuncio({ promo, isDetailPage = false }) {
     setError('');
     setUpdateSuccess('');
     try {
-      const data = await optimizePromoImage({ imageUrl: promo.imageUrl });
-      setUpdateSuccess(data.message);
-      setTimeout(() => window.location.reload(), 1500);
+      let message;
+      if (isPreview) {
+        const data = await optimizeBase64Image(promo.imageUrl);
+        onUpdatePreview({ imageUrl: data.optimizedImage });
+        message = "Imagem da pré-visualização otimizada!";
+      } else {
+        const data = await optimizeRepoImage({ imageUrl: promo.imageUrl });
+        message = data.message;
+        setTimeout(() => window.location.reload(), 1500);
+      }
+      setUpdateSuccess(message);
     } catch (e) {
       setError(e.message);
     } finally {
@@ -103,23 +100,29 @@ export default function Anuncio({ promo, isDetailPage = false }) {
 
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col md:flex-row mb-8 transition-shadow duration-300 hover:shadow-2xl relative">
-      <button onClick={handleShare} className="absolute top-4 right-4 p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition z-10" title="Compartilhar">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-          <path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1.002 1.002 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4.018 4.018 0 0 1-.128-1.287z"/>
-          <path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243L6.586 4.672z"/>
-        </svg>
-      </button>
+      {!isPreview && (
+        <button onClick={handleShare} className="absolute top-4 right-4 p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition z-10" title="Compartilhar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1.002 1.002 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4.018 4.018 0 0 1-.128-1.287z"/>
+            <path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243L6.586 4.672z"/>
+          </svg>
+        </button>
+      )}
       <div className="md:w-64 lg:w-72 md:flex-shrink-0 flex items-center justify-center bg-surface-200 rounded-l-xl">
         <img className="h-full w-full object-contain p-2" src={promo.imageUrl} alt={`Imagem de ${promo.title}`} onError={(e) => { e.target.onerror = null; e.target.src='https://placehold.co/800x600/ef4444/ffffff?text=Imagem+Indisponível'; }} />
       </div>
       <div className="p-6 md:p-8 flex-1 flex flex-col justify-between">
         <div>
-          <div className="uppercase tracking-wide text-sm text-brand-primary font-semibold">{promo.store}</div>
-          <Link href={promo.internalLink} className="pr-10">
-            <TitleComponent className="block mt-1 text-2xl leading-tight font-bold text-black hover:underline">
-              {promo.title}
-            </TitleComponent>
-          </Link>
+          <div className="uppercase tracking-wide text-sm text-brand-primary font-semibold">{promo.store || 'Loja'}</div>
+          {isPreview ? (
+            <TitleComponent className="block mt-1 text-2xl leading-tight font-bold text-black pr-10">{promo.title}</TitleComponent>
+          ) : (
+            <Link href={promo.internalLink} className="pr-10">
+              <TitleComponent className="block mt-1 text-2xl leading-tight font-bold text-black hover:underline">
+                {promo.title}
+              </TitleComponent>
+            </Link>
+          )}
           <p className="mt-2 text-gray-600" dangerouslySetInnerHTML={createMarkup(promo.text)} />
           {formattedDate && (
             <p className="mt-4 text-sm text-gray-500">
@@ -155,13 +158,12 @@ export default function Anuncio({ promo, isDetailPage = false }) {
               </>
             )}
           </div>
-
-          {session && generatedText && (
+          {session && generatedText && !isPreview && (
             <div className="mt-4 p-4 bg-slate-100 rounded-lg border border-slate-200">
               <h4 className="font-bold text-slate-800">✨ Sugestão de Texto Gerado por IA:</h4>
               <p className="mt-2 text-slate-700" dangerouslySetInnerHTML={createMarkup(generatedText)} />
-              <button onClick={handleReplaceText} disabled={isLoading} className="btn btn-success mt-3 text-sm flex items-center justify-center gap-2 disabled:opacity-50">
-                💾 {isLoading ? 'Salvando...' : 'Salvar Texto no Arquivo'}
+              <button onClick={() => alert("Função de salvar disponível apenas na criação de anúncios.")} className="btn btn-success mt-3 text-sm flex items-center justify-center gap-2 disabled:opacity-50">
+                💾 Salvar Texto no Arquivo
               </button>
             </div>
           )}
