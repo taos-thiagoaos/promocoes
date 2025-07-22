@@ -2,13 +2,12 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { isDev } from '../lib/helpers';
+import { useSession } from 'next-auth/react';
 import { DATE_FORMAT } from '../config';
-import { generateText, updatePromoText, optimizePromoImage } from '../services/devApi';
-
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+import { generateText, updatePromoText, optimizePromoImage } from '../services/adminApi';
 
 export default function Anuncio({ promo, isDetailPage = false }) {
+  const { data: session } = useSession();
   const [formattedDate, setFormattedDate] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [generatedText, setGeneratedText] = useState('');
@@ -111,7 +110,7 @@ export default function Anuncio({ promo, isDetailPage = false }) {
         </svg>
       </button>
       <div className="md:w-64 lg:w-72 md:flex-shrink-0 flex items-center justify-center bg-surface-200 rounded-l-xl">
-        <img className="h-full w-full object-contain p-2" src={`${basePath}${promo.imageUrl}`} alt={`Imagem de ${promo.title}`} onError={(e) => { e.target.onerror = null; e.target.src='https://placehold.co/800x600/ef4444/ffffff?text=Imagem+Indisponível'; }} />
+        <img className="h-full w-full object-contain p-2" src={promo.imageUrl} alt={`Imagem de ${promo.title}`} onError={(e) => { e.target.onerror = null; e.target.src='https://placehold.co/800x600/ef4444/ffffff?text=Imagem+Indisponível'; }} />
       </div>
       <div className="p-6 md:p-8 flex-1 flex flex-col justify-between">
         <div>
@@ -145,7 +144,7 @@ export default function Anuncio({ promo, isDetailPage = false }) {
             <a href={promo.link} target="_blank" rel="noopener noreferrer" className="btn btn-primary">
               Ver Promoção
             </a>
-            {isDev && (
+            {session && (
               <>
                 <button onClick={handleGenerateText} disabled={isLoading} className="btn btn-secondary flex items-center justify-center gap-2 disabled:opacity-50">
                   ✨ {isLoading ? 'Gerando...' : 'Gerar Texto'}
@@ -157,7 +156,7 @@ export default function Anuncio({ promo, isDetailPage = false }) {
             )}
           </div>
 
-          {isDev && generatedText && (
+          {session && generatedText && (
             <div className="mt-4 p-4 bg-slate-100 rounded-lg border border-slate-200">
               <h4 className="font-bold text-slate-800">✨ Sugestão de Texto Gerado por IA:</h4>
               <p className="mt-2 text-slate-700" dangerouslySetInnerHTML={createMarkup(generatedText)} />
@@ -166,8 +165,8 @@ export default function Anuncio({ promo, isDetailPage = false }) {
               </button>
             </div>
           )}
-          {isDev && error && <p className="mt-2 text-sm text-red-600 font-bold">{error}</p>}
-          {isDev && updateSuccess && <p className="mt-2 text-sm text-green-600 font-bold">{updateSuccess}</p>}
+          {session && error && <p className="mt-2 text-sm text-red-600 font-bold">{error}</p>}
+          {session && updateSuccess && <p className="mt-2 text-sm text-green-600 font-bold">{updateSuccess}</p>}
         </div>
       </div>
     </div>
