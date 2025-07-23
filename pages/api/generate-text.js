@@ -1,13 +1,13 @@
-import { getSession } from 'next-auth/react';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from './auth/[...nextauth]';
 
 export default async function handler(req, res) {
-  const session = await getSession({ req });
+  const session = await getServerSession(req, res, authOptions);
   if (!session) {
     return res.status(401).json({ error: 'Não autorizado' });
   }
   
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
-
   const { title } = req.body;
   const apiKey = process.env.GEMINI_API_KEY;
 
@@ -24,7 +24,6 @@ export default async function handler(req, res) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
-
     if (!apiResponse.ok) {
       const errorBody = await apiResponse.text();
       throw new Error(`Erro na API do Gemini: ${apiResponse.statusText} - ${errorBody}`);
@@ -42,4 +41,4 @@ export default async function handler(req, res) {
     console.error("Erro interno ao chamar a API do Gemini:", error);
     return res.status(500).json({ error: error.message });
   }
-}
+}            
