@@ -54,3 +54,5 @@ export default async function handler(req, res) {
     res.status(500).json({ error: 'Falha ao buscar dados da Amazon.' });
   }
 }
+
+export default withAllowedUsers(handler);

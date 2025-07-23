@@ -42,3 +42,5 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Falha ao atualizar o arquivo no servidor.' });
   }
 }
+
+export default withAllowedUsers(handler);

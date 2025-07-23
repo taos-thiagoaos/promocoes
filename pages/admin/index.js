@@ -6,6 +6,7 @@ import AdminForm from '../../components/AdminForm';
 import ScrapeAmazonForm from '../../components/ScrapeAmazonForm';
 import { getAboutData } from '../../lib/api';
 import { SITE_TITLE } from '../../config';
+import { isUserAllowed } from '../../lib/auth';
 
 export default function AdminPage({ aboutData }) {
   const { data: session, status } = useSession();
@@ -74,6 +75,21 @@ export default function AdminPage({ aboutData }) {
   );
 }
 
-export async function getStaticProps() {
-  return { props: { aboutData: getAboutData() } };
+export async function getServerSideProps(context) {
+  const allowed = await isUserAllowed(context.req);
+
+  if (!allowed) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: { 
+      aboutData: getAboutData()
+    }, 
+  };
 }

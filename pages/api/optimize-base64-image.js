@@ -41,3 +41,5 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Falha ao otimizar a imagem.' });
   }
 }
+
+export default withAllowedUsers(handler);
