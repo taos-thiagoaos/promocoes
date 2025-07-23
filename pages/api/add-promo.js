@@ -5,13 +5,13 @@ import { Octokit } from '@octokit/rest';
 const base64ToBuffer = (base64) => Buffer.from(base64.split(',')[1], 'base64');
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method Not Allowed' });
-  }
-
   const session = await getServerSession(req, res, authOptions);
   if (!session) {
     return res.status(401).json({ error: 'Não autorizado' });
+  }
+
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
   const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
