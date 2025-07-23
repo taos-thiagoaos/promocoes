@@ -4,29 +4,14 @@ import Header from '../../components/Header';
 import { useState, useEffect } from 'react';
 import AdminForm from '../../components/AdminForm';
 import ScrapeAmazonForm from '../../components/ScrapeAmazonForm';
-import { getAboutData } from '../../lib/api';
+import { getAboutData, getPromoById } from '../../lib/api';
 import { SITE_TITLE } from '../../config';
 import { isUserAllowed } from '../../lib/auth';
 
-export default function AdminPage({ aboutData }) {
+export default function AdminPage({ aboutData, initialData }) {
   const { data: session, status } = useSession();
   const [scrapedData, setScrapedData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [initialData, setInitialData] = useState(null);
-
-  useEffect(() => {
-    const editData = localStorage.getItem('editAnuncioData');
-    if (editData) {
-      try {
-        const parsedData = JSON.parse(editData);
-        setInitialData(parsedData);
-        localStorage.removeItem('editAnuncioData');
-      } catch (error) {
-        console.error("Erro ao processar dados de edição:", error);
-        localStorage.removeItem('editAnuncioData');
-      }
-    }
-  }, []);
 
   const handleScrapeSuccess = (data) => {
     setScrapedData(data);
@@ -87,9 +72,17 @@ export async function getServerSideProps(context) {
     };
   }
 
+  const { edit, date } = context.query;
+  let promoData = null;
+
+  if (edit && date) {
+    promoData = getPromoById(edit, date);
+  }
+
   return {
     props: { 
-      aboutData: getAboutData()
+      aboutData: getAboutData(),
+      initialData: promoData ? JSON.parse(JSON.stringify(promoData)) : null,
     }, 
   };
 }

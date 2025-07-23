@@ -162,8 +162,7 @@ export default function Anuncio({ promo, isDetailPage = false, isPreview = false
             </a>
             {session && !isPreview && (
               <>
-                {onEdit && <button onClick={onEdit} className="btn btn-secondary">Editar</button>}
-                {!onEdit && session && !isPreview && <Link href={`/admin?edit=${promo.id}&date=${promo.date}`} className="btn btn-secondary">Editar</Link>}
+                <Link href={`/admin?edit=${promo.id}&date=${promo.date}`} className="btn btn-secondary">Editar</Link>
                 <button onClick={handleDelete} disabled={isLoading} className="btn btn-danger">Apagar</button>
               </>
             )}
