@@ -19,29 +19,35 @@ export default async function handler(req, res) {
   const repo = 'promocoes';
 
   try {
-    const { title, text, link, image, startDate, endDate } = req.body;
+    const { title, text, link, image, startDate, endDate, id } = req.body;
     
-    const imageBuffer = base64ToBuffer(image);
-    const imageExtension = image.substring(image.indexOf('/') + 1, image.indexOf(';'));
-    const imageName = `${Date.now()}-${title.toLowerCase().replace(/\s+/g, '-')}.${imageExtension}`;
-    const imagePath = `public/images/anuncios/${imageName}`;
+    let finalImageUrl = req.body.imageUrl; // Para edições
 
-    await octokit.repos.createOrUpdateFileContents({
-      owner,
-      repo,
-      path: imagePath,
-      message: `[BOT] Adiciona imagem para o anúncio: ${title}`,
-      content: imageBuffer.toString('base64'),
-      branch: 'main',
-    });
+    // Se for uma nova imagem (base64), faz o upload
+    if (image) {
+      const imageBuffer = base64ToBuffer(image);
+      const imageExtension = image.substring(image.indexOf('/') + 1, image.indexOf(';'));
+      const imageName = `${Date.now()}-${title.toLowerCase().replace(/\s+/g, '-')}.${imageExtension}`;
+      const imagePath = `public/images/anuncios/${imageName}`;
+
+      await octokit.repos.createOrUpdateFileContents({
+        owner,
+        repo,
+        path: imagePath,
+        message: `[BOT] Adiciona imagem para o anúncio: ${title}`,
+        content: imageBuffer.toString('base64'),
+        branch: 'main',
+      });
+      finalImageUrl = `/images/anuncios/${imageName}`;
+    }
 
     const promoData = {
-      id: `promo-${Date.now()}`,
+      id: id || `promo-${Date.now()}`,
       title,
       date: startDate,
       text,
       link,
-      imageUrl: `/images/anuncios/${imageName}`,
+      imageUrl: finalImageUrl,
       coupon: null,
       store: 'Amazon',
       endDate,
@@ -64,21 +70,28 @@ export default async function handler(req, res) {
       if (error.status !== 404) throw error;
     }
 
-    existingJsonContent.push(promoData);
+    let updatedContent;
+    // Se for uma edição, substitui o item existente
+    if (id) {
+      updatedContent = existingJsonContent.map(p => p.id === id ? promoData : p);
+    } else {
+      existingJsonContent.push(promoData);
+      updatedContent = existingJsonContent;
+    }
 
     await octokit.repos.createOrUpdateFileContents({
       owner,
       repo,
       path: jsonPath,
-      message: `[BOT] Adiciona anúncio: ${title}`,
-      content: Buffer.from(JSON.stringify(existingJsonContent, null, 2)).toString('base64'),
+      message: `[BOT] ${id ? 'Atualiza' : 'Adiciona'} anúncio: ${title}`,
+      content: Buffer.from(JSON.stringify(updatedContent, null, 2)).toString('base64'),
       sha: existingJsonSha,
       branch: 'main',
     });
 
-    res.status(200).json({ message: 'Anúncio adicionado com sucesso!' });
+    res.status(200).json({ message: `Anúncio ${id ? 'atualizado' : 'adicionado'} com sucesso!` });
   } catch (error) {
-    console.error('Erro ao adicionar anúncio no GitHub:', error);
-    res.status(500).json({ error: 'Falha ao adicionar anúncio no GitHub.' });
+    console.error('Erro no GitHub:', error);
+    res.status(500).json({ error: 'Falha na operação com o GitHub.' });
   }
-}  
+}
