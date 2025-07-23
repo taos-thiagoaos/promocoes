@@ -4,7 +4,7 @@ import { Octokit } from '@octokit/rest';
 
 const base64ToBuffer = (base64) => Buffer.from(base64.split(',')[1], 'base64');
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   const session = await getServerSession(req, res, authOptions);
   if (!session) {
     return res.status(401).json({ error: 'Não autorizado' });

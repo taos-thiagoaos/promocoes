@@ -33,9 +33,14 @@ export default function Header({ title }) {
                   Sair
                 </button>
               ) : (
-                <button onClick={() => signIn('github')} className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                  Login
-                </button>
+                <>
+                  <button onClick={() => signIn('github')} className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                    Login com Github
+                  </button>
+                  <button onClick={() => signIn('google')} className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                    Login com Google
+                  </button>
+                </>
               )}
             </div>
           </nav>
@@ -65,8 +70,10 @@ export default function Header({ title }) {
             {session ? (
               <button onClick={() => signOut()} className="w-full text-left text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Sair</button>
             ) : (
-              <button onClick={() => signIn('github')} className="w-full text-left text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Login com Github</button>
-              <button onClick={() => signIn('google')} className="w-full text-left text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Login com Google</button>
+              <>
+                <button onClick={() => signIn('github')} className="w-full text-left text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Login com Github</button>
+                <button onClick={() => signIn('google')} className="w-full text-left text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Login com Google</button>
+              </>
             )}
           </div>
         </div>
