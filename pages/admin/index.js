@@ -1,12 +1,36 @@
 import { useSession, signIn } from 'next-auth/react';
 import Head from 'next/head';
 import Header from '../../components/Header';
+import { useState, useEffect } from 'react';
 import AdminForm from '../../components/AdminForm';
+import ScrapeAmazonForm from '../../components/ScrapeAmazonForm';
 import { getAboutData } from '../../lib/api';
 import { SITE_TITLE } from '../../config';
 
 export default function AdminPage({ aboutData }) {
   const { data: session, status } = useSession();
+  const [scrapedData, setScrapedData] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [initialData, setInitialData] = useState(null);
+
+  useEffect(() => {
+    const editData = localStorage.getItem('editAnuncioData');
+    if (editData) {
+      try {
+        const parsedData = JSON.parse(editData);
+        setInitialData(parsedData);
+        localStorage.removeItem('editAnuncioData');
+      } catch (error) {
+        console.error("Erro ao processar dados de edição:", error);
+        localStorage.removeItem('editAnuncioData');
+      }
+    }
+  }, []);
+
+  const handleScrapeSuccess = (data) => {
+    setScrapedData(data);
+  };
+
   const loading = status === 'loading';
 
   if (loading) {
@@ -42,7 +66,8 @@ export default function AdminPage({ aboutData }) {
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="max-w-2xl mx-auto">
           <h1 className="text-3xl font-bold mb-6">Painel Administrativo</h1>
-          <AdminForm />
+          <ScrapeAmazonForm onScrapeSuccess={handleScrapeSuccess} onLoading={setIsLoading} />
+          <AdminForm scrapedData={scrapedData} isLoading={isLoading} initialData={initialData} />
         </div>
       </main>
     </div>

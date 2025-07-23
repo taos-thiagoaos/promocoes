@@ -1,5 +1,8 @@
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from './auth/[...nextauth]';
+import sharp from 'sharp';
+import path from 'path';
+import fs from 'fs/promises';
 
 export default async function handler(req, res) {
   const session = await getServerSession(req, res, authOptions);
@@ -11,32 +14,48 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const { imageUrl } = req.body; // Recebe a imagem em base64
+  const { imageUrl } = req.body; // ex: /images/anuncios/123-abc.jpeg
 
   if (!imageUrl) {
-    return res.status(400).json({ error: 'A imagem em base64 é obrigatória.' });
+    return res.status(400).json({ error: 'A URL da imagem é obrigatória.' });
   }
 
   try {
-    const imageBuffer = Buffer.from(imageUrl.split(',')[1], 'base64');
+    const imagePath = path.join(process.cwd(), 'public', imageUrl);
+
+    try {
+      await fs.access(imagePath);
+    } catch (e) {
+      return res.status(404).json({ error: `Arquivo de imagem não encontrado em: ${imagePath}` });
+    }
+    
+    const imageBuffer = await fs.readFile(imagePath);
 
     const optimizedBuffer = await sharp(imageBuffer)
       .resize({
-        width: 1200,
-        height: 630,
+        width: 800,
         fit: 'inside',
         withoutEnlargement: true,
       })
-      .webp({ quality: 80 })
+      .webp({ quality: 75 })
       .toBuffer();
 
-    // Retorna a imagem otimizada como uma string base64
-    const optimizedImage = `data:image/webp;base64,${optimizedBuffer.toString('base64')}`;
+    const parsedPath = path.parse(imagePath);
+    const newFileName = `${parsedPath.name}.webp`;
+    const newImagePath = path.join(parsedPath.dir, newFileName);
+    
+    await fs.writeFile(newImagePath, optimizedBuffer);
 
-    return res.status(200).json({ optimizedImage });
+    if (parsedPath.ext.toLowerCase() !== '.webp') {
+        await fs.unlink(imagePath);
+    }
+
+    const newPublicUrl = path.join(path.dirname(imageUrl), newFileName).replace(/\\/g, '/');
+
+    return res.status(200).json({ optimizedImageUrl: newPublicUrl });
 
   } catch (error) {
-    console.error("Erro ao otimizar a imagem base64:", error);
+    console.error("Erro ao otimizar a imagem:", error);
     return res.status(500).json({ error: 'Falha ao otimizar a imagem.' });
   }
-}  
+}

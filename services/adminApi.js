@@ -21,7 +21,7 @@ export const generateText = (title) => {
   });
 };
 
-export const optimizeRepoImage = ({ imageUrl }) => {
+export const optimizeRepoImage = (imageUrl) => {
   return fetchApi('/api/optimize-image', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

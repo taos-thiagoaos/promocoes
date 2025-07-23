@@ -6,7 +6,7 @@ import { useSession } from 'next-auth/react';
 import { DATE_FORMAT } from '../config';
 import { generateText, optimizeRepoImage, optimizeBase64Image, deletePromo } from '../services/adminApi';
 
-export default function Anuncio({ promo, isDetailPage = false, isPreview = false, onUpdatePreview }) {
+export default function Anuncio({ promo, isDetailPage = false, isPreview = false, onUpdatePreview, onEdit }) {
   const { data: session } = useSession();
   const [formattedDate, setFormattedDate] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -82,7 +82,7 @@ export default function Anuncio({ promo, isDetailPage = false, isPreview = false
         onUpdatePreview({ imageUrl: data.optimizedImage });
         message = "Imagem da pré-visualização otimizada!";
       } else {
-        const data = await optimizeRepoImage({ imageUrl: promo.imageUrl });
+        const data = await optimizeRepoImage(promo.imageUrl);
         message = data.message;
         setTimeout(() => window.location.reload(), 1500);
       }
@@ -162,7 +162,8 @@ export default function Anuncio({ promo, isDetailPage = false, isPreview = false
             </a>
             {session && !isPreview && (
               <>
-                <Link href={`/admin?edit=${promo.id}&date=${promo.date}`} className="btn btn-secondary">Editar</Link>
+                {onEdit && <button onClick={onEdit} className="btn btn-secondary">Editar</button>}
+                {!onEdit && session && !isPreview && <Link href={`/admin?edit=${promo.id}&date=${promo.date}`} className="btn btn-secondary">Editar</Link>}
                 <button onClick={handleDelete} disabled={isLoading} className="btn btn-danger">Apagar</button>
               </>
             )}

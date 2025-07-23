@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Anuncio from './Anuncio';
 import { AnuncioModel } from '../models/AnuncioModel';
 
-export default function AdminForm() {
+export default function AdminForm({ scrapedData, isLoading, initialData }) {
   const [formData, setFormData] = useState({
     title: '',
     text: '',
@@ -13,7 +13,18 @@ export default function AdminForm() {
   });
   const [previewData, setPreviewData] = useState(null);
   const [status, setStatus] = useState({ message: '', error: false });
-  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (scrapedData) {
+      setFormData(prev => ({ ...prev, ...scrapedData }));
+    }
+  }, [scrapedData]);
+
+  useEffect(() => {
+    if (initialData) {
+      setFormData(initialData);
+    }
+  }, [initialData]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -90,15 +101,15 @@ export default function AdminForm() {
         {/* Campos do formulário... */}
         <div>
           <label htmlFor="title" className="block text-sm font-medium text-gray-700">Título do Anúncio</label>
-          <input type="text" name="title" id="title" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" onChange={handleInputChange} />
+          <input type="text" name="title" id="title" value={formData.title} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" onChange={handleInputChange} />
         </div>
         <div>
           <label htmlFor="text" className="block text-sm font-medium text-gray-700">Descrição</label>
-          <textarea name="text" id="text" rows="4" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" onChange={handleInputChange}></textarea>
+          <textarea name="text" id="text" rows="4" value={formData.text} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" onChange={handleInputChange}></textarea>
         </div>
         <div>
           <label htmlFor="link" className="block text-sm font-medium text-gray-700">Link da Oferta</label>
-          <input type="url" name="link" id="link" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" onChange={handleInputChange} />
+          <input type="url" name="link" id="link" value={formData.link} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" onChange={handleInputChange} />
         </div>
         <div>
           <label htmlFor="image" className="block text-sm font-medium text-gray-700">Imagem do Produto</label>
@@ -107,11 +118,11 @@ export default function AdminForm() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">Data de Início</label>
-            <input type="date" name="startDate" id="startDate" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" onChange={handleInputChange} />
+            <input type="date" name="startDate" id="startDate" value={formData.startDate} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" onChange={handleInputChange} />
           </div>
           <div>
             <label htmlFor="endDate" className="block text-sm font-medium text-gray-700">Data de Fim</label>
-            <input type="date" name="endDate" id="endDate" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" onChange={handleInputChange} />
+            <input type="date" name="endDate" id="endDate" value={formData.endDate} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" onChange={handleInputChange} />
           </div>
         </div>
         <div>
