@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   images: {
     unoptimized: true,
-    domains: ['placehold.co'],
+    domains: ['placehold.co', 'm.media-amazon.com'],
   },
 };
 

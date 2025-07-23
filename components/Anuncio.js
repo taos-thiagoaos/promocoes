@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { DATE_FORMAT } from '../config';
-import { generateText, optimizeRepoImage, optimizeBase64Image } from '../services/adminApi';
+import { generateText, optimizeRepoImage, optimizeBase64Image, deletePromo } from '../services/adminApi';
 
 export default function Anuncio({ promo, isDetailPage = false, isPreview = false, onUpdatePreview }) {
   const { data: session } = useSession();
@@ -94,18 +94,31 @@ export default function Anuncio({ promo, isDetailPage = false, isPreview = false
     }
   };
 
-  const createMarkup = (text) => ({ __html: text ? text.replace(/\n/g, '<br />') : '' });
+  const handleDelete = async () => {
+    if (window.confirm(`Tem certeza que deseja apagar o anúncio "${promo.title}"?`)) {
+      setIsLoading(true);
+      setError('');
+      setUpdateSuccess('');
+      try {
+        await deletePromo({ id: promo.id, date: promo.date });
+        setUpdateSuccess('Anúncio apagado com sucesso! A página será recarregada.');
+        setTimeout(() => window.location.reload(), 1500);
+      } catch (e) {
+        setError(e.message);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
 
+  const createMarkup = (text) => ({ __html: text ? text.replace(/\n/g, '<br />') : '' });
   const TitleComponent = isDetailPage ? 'h1' : 'h2';
 
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col md:flex-row mb-8 transition-shadow duration-300 hover:shadow-2xl relative">
       {!isPreview && (
         <button onClick={handleShare} className="absolute top-4 right-4 p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition z-10" title="Compartilhar">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1.002 1.002 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4.018 4.018 0 0 1-.128-1.287z"/>
-            <path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243L6.586 4.672z"/>
-          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1.002 1.002 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4.018 4.018 0 0 1-.128-1.287z"/><path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243L6.586 4.672z"/></svg>
         </button>
       )}
       <div className="md:w-64 lg:w-72 md:flex-shrink-0 flex items-center justify-center bg-surface-200 rounded-l-xl">
@@ -147,7 +160,13 @@ export default function Anuncio({ promo, isDetailPage = false, isPreview = false
             <a href={promo.link} target="_blank" rel="noopener noreferrer" className="btn btn-primary">
               Ver Promoção
             </a>
-            {session && (
+            {session && !isPreview && (
+              <>
+                <Link href={`/admin?edit=${promo.id}&date=${promo.date}`} className="btn btn-secondary">Editar</Link>
+                <button onClick={handleDelete} disabled={isLoading} className="btn btn-danger">Apagar</button>
+              </>
+            )}
+            {session && isPreview && (
               <>
                 <button onClick={handleGenerateText} disabled={isLoading} className="btn btn-secondary flex items-center justify-center gap-2 disabled:opacity-50">
                   ✨ {isLoading ? 'Gerando...' : 'Gerar Texto'}
@@ -158,15 +177,6 @@ export default function Anuncio({ promo, isDetailPage = false, isPreview = false
               </>
             )}
           </div>
-          {session && generatedText && !isPreview && (
-            <div className="mt-4 p-4 bg-slate-100 rounded-lg border border-slate-200">
-              <h4 className="font-bold text-slate-800">✨ Sugestão de Texto Gerado por IA:</h4>
-              <p className="mt-2 text-slate-700" dangerouslySetInnerHTML={createMarkup(generatedText)} />
-              <button onClick={() => alert("Função de salvar disponível apenas na criação de anúncios.")} className="btn btn-success mt-3 text-sm flex items-center justify-center gap-2 disabled:opacity-50">
-                💾 Salvar Texto no Arquivo
-              </button>
-            </div>
-          )}
           {session && error && <p className="mt-2 text-sm text-red-600 font-bold">{error}</p>}
           {session && updateSuccess && <p className="mt-2 text-sm text-green-600 font-bold">{updateSuccess}</p>}
         </div>
