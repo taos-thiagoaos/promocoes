@@ -9,7 +9,7 @@ async function fetchImageAsBase64(url) {
   return `data:${contentType};base64,${Buffer.from(buffer).toString('base64')}`;
 }
 
-export default async function handler(req, res) {
+export async function handler(req, res) {
   const session = await getServerSession(req, res, authOptions);
   if (!session) {
     return res.status(401).json({ error: 'Não autorizado' });

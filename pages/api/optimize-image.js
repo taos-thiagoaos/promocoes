@@ -4,7 +4,7 @@ import sharp from 'sharp';
 import path from 'path';
 import fs from 'fs/promises';
 
-export default async function handler(req, res) {
+export async function handler(req, res) {
   const session = await getServerSession(req, res, authOptions);
   if (!session) {
     return res.status(401).json({ error: 'Não autorizado' });
