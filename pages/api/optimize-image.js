@@ -11,14 +11,14 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const { image } = req.body; // Recebe a imagem em base64
+  const { imageUrl } = req.body; // Recebe a imagem em base64
 
-  if (!image) {
+  if (!imageUrl) {
     return res.status(400).json({ error: 'A imagem em base64 é obrigatória.' });
   }
 
   try {
-    const imageBuffer = Buffer.from(image.split(',')[1], 'base64');
+    const imageBuffer = Buffer.from(imageUrl.split(',')[1], 'base64');
 
     const optimizedBuffer = await sharp(imageBuffer)
       .resize({
