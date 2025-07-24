@@ -19,7 +19,8 @@ export default function AdminForm({ scrapedData, isLoading, initialData }) {
         title: scrapedData.title,
         text: scrapedData.description,
         image: scrapedData.image,
-        date: new Date().toISOString().split('T')[0],
+        link: scrapedData.url,
+        startDate: new Date().toISOString().split('T')[0],
       } }));
     }
   }, [scrapedData]);
@@ -127,7 +128,7 @@ export default function AdminForm({ scrapedData, isLoading, initialData }) {
         </div>
         <div>
           <label htmlFor="image" className="block text-sm font-medium text-gray-700">Imagem do Produto</label>
-          <input type="file" name="image" id="image" required accept="image/png, image/jpeg, image/webp" className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" onChange={handleFileChange} />
+          <input type="file" name="image" id="image" value={formData.imageUrl}  required accept="image/png, image/jpeg, image/webp" className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" onChange={handleFileChange} />
         </div>
         <div>
           <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">Data</label>

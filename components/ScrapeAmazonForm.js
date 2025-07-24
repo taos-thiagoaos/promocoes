@@ -14,7 +14,7 @@ export default function ScrapeAmazonForm({ onScrapeSuccess, onLoading }) {
     try {
       const data = await scrapeAmazonUrl(url);
 
-      onScrapeSuccess(data);
+      onScrapeSuccess({...{link: url},...data});
     } catch (err) {
       setError(err.message);
     } finally {
