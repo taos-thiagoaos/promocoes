@@ -1,19 +1,9 @@
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from './auth/[...nextauth]';
+import { withAllowedUsers } from '../../lib/auth';
 import { Octokit } from '@octokit/rest';
 
 const base64ToBuffer = (base64) => Buffer.from(base64.split(',')[1], 'base64');
 
 async function handler(req, res) {
-  const session = await getServerSession(req, res, authOptions);
-  if (!session) {
-    return res.status(401).json({ error: 'Não autorizado' });
-  }
-
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method Not Allowed' });
-  }
-
   const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
   const owner = 'taos-thiagoaos';
   const repo = 'promocoes';

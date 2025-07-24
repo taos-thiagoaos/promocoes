@@ -1,6 +1,5 @@
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from './auth/[...nextauth]';
 import * as cheerio from 'cheerio';
+import { withAllowedUsers } from '../../lib/auth';
 
 async function fetchImageAsBase64(url) {
   const response = await fetch(url);
@@ -9,13 +8,9 @@ async function fetchImageAsBase64(url) {
   return `data:${contentType};base64,${Buffer.from(buffer).toString('base64')}`;
 }
 
-export async function handler(req, res) {
-  const session = await getServerSession(req, res, authOptions);
-  if (!session) {
-    return res.status(401).json({ error: 'Não autorizado' });
-  }
-
+async function handler(req, res) {
   const { url } = req.body;
+  
   if (!url) {
     return res.status(400).json({ error: 'URL é obrigatória.' });
   }

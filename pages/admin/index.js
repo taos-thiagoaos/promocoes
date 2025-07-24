@@ -61,7 +61,7 @@ export default function AdminPage({ aboutData, initialData }) {
 }
 
 export async function getServerSideProps(context) {
-  const allowed = await isUserAllowed(context.req);
+  const allowed = await isUserAllowed(context.req, context.res);
 
   if (!allowed) {
     return {

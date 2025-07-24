@@ -1,17 +1,7 @@
 import sharp from 'sharp';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from './auth/[...nextauth]';
+import { withAllowedUsers } from '../../lib/auth';
 
 export async function handler(req, res) {
-  const session = await getServerSession(req, res, authOptions);
-  if (!session) {
-    return res.status(401).json({ error: 'Não autorizado' });
-  }
-
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method Not Allowed' });
-  }
-
   const { image } = req.body; // Recebe a imagem em base64
 
   if (!image) {

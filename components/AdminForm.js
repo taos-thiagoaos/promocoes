@@ -9,7 +9,6 @@ export default function AdminForm({ scrapedData, isLoading, initialData }) {
     link: '',
     image: null,
     startDate: '',
-    endDate: '',
   });
   const [previewData, setPreviewData] = useState(null);
   const [status, setStatus] = useState({ message: '', error: false });
@@ -22,7 +21,17 @@ export default function AdminForm({ scrapedData, isLoading, initialData }) {
 
   useEffect(() => {
     if (initialData) {
-      setFormData(initialData);
+      const { date, imageUrl, ...rest } = initialData;
+      setFormData({ ...rest, startDate: date, image: imageUrl });
+      
+      const promoModel = new AnuncioModel({
+        ...initialData,
+        id: 'preview-id',
+        imageUrl: initialData.imageUrl, 
+        date: initialData.date,
+        store: 'Sua Loja',
+      });
+      setPreviewData(promoModel);
     }
   }, [initialData]);
 
@@ -85,7 +94,7 @@ export default function AdminForm({ scrapedData, isLoading, initialData }) {
       }
       
       setStatus({ message: 'Anúncio adicionado com sucesso! O site será reconstruído em breve.', error: false });
-      setFormData({ title: '', text: '', link: '', image: null, startDate: '', endDate: '' });
+      setFormData({ title: '', text: '', link: '', image: null, startDate: '' });
       setPreviewData(null);
       document.getElementById("admin-promo-form").reset();
     } catch (err) {
@@ -115,15 +124,9 @@ export default function AdminForm({ scrapedData, isLoading, initialData }) {
           <label htmlFor="image" className="block text-sm font-medium text-gray-700">Imagem do Produto</label>
           <input type="file" name="image" id="image" required accept="image/png, image/jpeg, image/webp" className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" onChange={handleFileChange} />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">Data de Início</label>
-            <input type="date" name="startDate" id="startDate" value={formData.startDate} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" onChange={handleInputChange} />
-          </div>
-          <div>
-            <label htmlFor="endDate" className="block text-sm font-medium text-gray-700">Data de Fim</label>
-            <input type="date" name="endDate" id="endDate" value={formData.endDate} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" onChange={handleInputChange} />
-          </div>
+        <div>
+          <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">Data</label>
+          <input type="date" name="startDate" id="startDate" value={formData.startDate} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" onChange={handleInputChange} />
         </div>
         <div>
           <button type="submit" disabled={isLoading} className="w-full btn btn-secondary disabled:opacity-50">

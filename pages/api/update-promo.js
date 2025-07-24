@@ -1,16 +1,8 @@
 import fs from 'fs/promises';
 import path from 'path';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from './auth/[...nextauth]';
+import { withAllowedUsers } from '../../lib/auth';
 
 export async function handler(req, res) {
-  const session = await getServerSession(req, res, authOptions);
-  if (!session) {
-    return res.status(401).json({ error: 'Não autorizado' });
-  }
-  
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
-
   const { id, date, newText } = req.body;
   if (!id || !date || !newText) return res.status(400).json({ error: 'ID, data e novo texto são obrigatórios.' });
 

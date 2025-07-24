@@ -1,17 +1,7 @@
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from './auth/[...nextauth]';
+import { withAllowedUsers } from '../../lib/auth';
 import { Octokit } from '@octokit/rest';
 
 async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method Not Allowed' });
-  }
-
-  const session = await getServerSession(req, res, authOptions);
-  if (!session) {
-    return res.status(401).json({ error: 'Não autorizado' });
-  }
-
   const { id, date } = req.body;
   if (!id || !date) {
     return res.status(400).json({ error: 'ID e data são obrigatórios.' });
