@@ -11,8 +11,8 @@
   "dependencies": {
     "react": "^18",
     "react-dom": "^18",
-    "next": "14.2.4",
-    "next-auth": "^4.24.7",
+    "next": "15.4.3",
+    "next-auth": "^4.24.11",
     "gray-matter": "^4.0.3",
     "date-fns": "^3.6.0",
     "@octokit/rest": "^21.0.0",
