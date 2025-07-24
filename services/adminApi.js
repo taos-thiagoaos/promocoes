@@ -5,11 +5,12 @@
  * @returns {Promise<object>} Os dados da resposta da API.
  */
 async function fetchApi(endpoint, options) {
-  const response = await fetch(endpoint, options);
-  const data = await response.json();
+  const response = await fetch(endpoint, options);  
   if (!response.ok) {
     throw new Error(data.error || 'Ocorreu um erro na API.');
   }
+
+  const data = await response.json();
   return data;
 }
 

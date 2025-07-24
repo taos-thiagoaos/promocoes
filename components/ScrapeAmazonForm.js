@@ -1,5 +1,6 @@
 
 import { useState } from 'react';
+import { scrapeAmazonUrl } from '@/services/adminApi';
 
 export default function ScrapeAmazonForm({ onScrapeSuccess, onLoading }) {
   const [url, setUrl] = useState('');
@@ -11,17 +12,7 @@ export default function ScrapeAmazonForm({ onScrapeSuccess, onLoading }) {
     onLoading(true);
 
     try {
-      const response = await fetch('/api/scrape-amazon', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Falha ao buscar dados da Amazon.');
-      }
+      const data = await scrapeAmazonUrl(url);
 
       onScrapeSuccess(data);
     } catch (err) {

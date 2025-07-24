@@ -15,7 +15,12 @@ export default function AdminForm({ scrapedData, isLoading, initialData }) {
 
   useEffect(() => {
     if (scrapedData) {
-      setFormData(prev => ({ ...prev, ...scrapedData }));
+      setFormData(prev => ({ ...prev, ...{
+        title: scrapedData.title,
+        text: scrapedData.description,
+        image: scrapedData.image,
+        date: new Date().toISOString().split('T')[0],
+      } }));
     }
   }, [scrapedData]);
 
