@@ -8,6 +8,7 @@ export default function AdminForm({ scrapedData, isLoading, initialData }) {
     text: '',
     link: '',
     image: null,
+    imageUrl: null,
     startDate: '',
   });
   const [previewData, setPreviewData] = useState(null);
@@ -18,8 +19,8 @@ export default function AdminForm({ scrapedData, isLoading, initialData }) {
       setFormData(prev => ({ ...prev, ...{
         title: scrapedData.title,
         text: scrapedData.description,
-        image: scrapedData.image,
-        link: scrapedData.url,
+        imageBase64: scrapedData.image,
+        link: scrapedData.link,
         startDate: new Date().toISOString().split('T')[0],
       } }));
     }
@@ -37,6 +38,7 @@ export default function AdminForm({ scrapedData, isLoading, initialData }) {
         date: initialData.date,
         store: 'Sua Loja',
       });
+
       setPreviewData(promoModel);
     }
   }, [initialData]);
@@ -69,9 +71,9 @@ export default function AdminForm({ scrapedData, isLoading, initialData }) {
       date: formData.startDate,
       text: formData.text,
       link: formData.link,
-      imageUrl: formData.image, // A imagem aqui é base64
+      imageUrl: formData.image || formData.imageBase64, // A imagem aqui é base64
       coupon: null,
-      store: 'Sua Loja',
+      store: 'AMAZON',
     });
     setPreviewData(promoModel);
     setStatus({ message: '', error: false });
@@ -85,6 +87,8 @@ export default function AdminForm({ scrapedData, isLoading, initialData }) {
   const handleSubmit = async () => {
     setIsLoading(true);
     setStatus({ message: '', error: false });
+
+    formData.image = formData.image || formData.imageBase64;
 
     try {
       const response = await fetch('/api/add-promo', {
@@ -100,7 +104,7 @@ export default function AdminForm({ scrapedData, isLoading, initialData }) {
       }
       
       setStatus({ message: 'Anúncio adicionado com sucesso! O site será reconstruído em breve.', error: false });
-      setFormData({ title: '', text: '', link: '', image: null, startDate: '' });
+      setFormData({ title: '', text: '', link: '', image: null, imageBase64: null, startDate: '' });
       setPreviewData(null);
       document.getElementById("admin-promo-form").reset();
     } catch (err) {
