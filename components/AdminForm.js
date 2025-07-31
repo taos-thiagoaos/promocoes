@@ -4,12 +4,14 @@ import { AnuncioModel } from '../models/AnuncioModel';
 
 export default function AdminForm({ scrapedData, isLoading, initialData }) {
   const [formData, setFormData] = useState({
+    id: null,
     title: '',
     text: '',
     link: '',
     image: null,
     imageUrl: null,
     startDate: '',
+    store: 'AMAZON',
   });
   const [previewData, setPreviewData] = useState(null);
   const [status, setStatus] = useState({ message: '', error: false });
@@ -23,23 +25,17 @@ export default function AdminForm({ scrapedData, isLoading, initialData }) {
         link: scrapedData.link,
         startDate: new Date().toISOString().split('T')[0],
       } }));
+
+      previewDataFromFormData();
     }
   }, [scrapedData]);
 
   useEffect(() => {
     if (initialData) {
-      const { date, imageUrl, ...rest } = initialData;
-      setFormData({ ...rest, startDate: date, image: imageUrl });
+      const { date, ...rest } = initialData;
+      setFormData({ ...rest, startDate: date });
       
-      const promoModel = new AnuncioModel({
-        ...initialData,
-        id: 'preview-id',
-        imageUrl: initialData.imageUrl, 
-        date: initialData.date,
-        store: 'Sua Loja',
-      });
-
-      setPreviewData(promoModel);
+      previewDataFromFormData();
     }
   }, [initialData]);
 
@@ -59,23 +55,28 @@ export default function AdminForm({ scrapedData, isLoading, initialData }) {
     }
   };
 
+  const previewDataFromFormData = () => {
+    const promoModel = new AnuncioModel({
+      id: formData.id ||'preview-id',
+      title: formData.title,
+      date: formData.startDate,
+      text: formData.text,
+      link: formData.link,
+      imageUrl: formData.image || formData.imageBase64 || formData.imageUrl,
+      coupon: formData.coupon,
+      store: formData.store || 'AMAZON',
+    });
+    setPreviewData(promoModel);
+
+  }
+
   const handlePreview = (e) => {
     e.preventDefault();
     if (!formData.title || !formData.startDate || !formData.image) {
       setStatus({ message: 'Título, Data de Início e Imagem são obrigatórios para a pré-visualização.', error: true });
       return;
     }
-    const promoModel = new AnuncioModel({
-      id: 'preview-id',
-      title: formData.title,
-      date: formData.startDate,
-      text: formData.text,
-      link: formData.link,
-      imageUrl: formData.image || formData.imageBase64, // A imagem aqui é base64
-      coupon: null,
-      store: 'AMAZON',
-    });
-    setPreviewData(promoModel);
+    previewDataFromFormData();
     setStatus({ message: '', error: false });
   };
   
@@ -130,10 +131,12 @@ export default function AdminForm({ scrapedData, isLoading, initialData }) {
           <label htmlFor="link" className="block text-sm font-medium text-gray-700">Link da Oferta</label>
           <input type="url" name="link" id="link" value={formData.link} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" onChange={handleInputChange} />
         </div>
-        <div>
-          <label htmlFor="image" className="block text-sm font-medium text-gray-700">Imagem do Produto</label>
-          <input type="file" name="image" id="image" value={formData.imageUrl}  required accept="image/png, image/jpeg, image/webp" className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" onChange={handleFileChange} />
-        </div>
+        {(!formData.imageBase64 && !formData.imageUrl) && (
+          <div>
+            <label htmlFor="image" className="block text-sm font-medium text-gray-700">Imagem do Produto</label>
+            <input type="file" name="image" id="image" required accept="image/png, image/jpeg, image/webp" className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" onChange={handleFileChange} />
+          </div>
+        )}
         <div>
           <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">Data</label>
           <input type="date" name="startDate" id="startDate" value={formData.startDate} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" onChange={handleInputChange} />

@@ -60,17 +60,22 @@ export default function AdminPage({ aboutData, initialData }) {
   );
 }
 
-export async function getServerSideProps(context) {
-  const allowed = await isUserAllowed(context.req, context.res);
+AdminPage.auth = {
+  role: "admin",
+  loading: <div>Carregando...</div>,
+}
 
-  if (!allowed) {
-    return {
-      redirect: {
-        destination: '/',
-        permanent: false,
-      },
-    };
-  }
+export async function getServerSideProps(context) {
+  // const allowed = await isUserAllowed(context.req, context.res);
+
+  // if (!allowed) {
+  //   return {
+  //     redirect: {
+  //       destination: '/',
+  //       permanent: false,
+  //     },
+  //   };
+  // }
 
   const { edit, date } = context.query;
   let promoData = null;
