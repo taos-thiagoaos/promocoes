@@ -17,7 +17,9 @@ export default function Anuncio({ promo, isDetailPage = false, isPreview = false
   useEffect(() => {
     try {
       if (promo.date) {
-        setFormattedDate(format(new Date(promo.date), DATE_FORMAT, { locale: ptBR }));
+        const [year, month, day] = promo.date.split('-').map(Number);
+        const localDate = new Date(year, month - 1, day);
+        setFormattedDate(format(localDate, DATE_FORMAT, { locale: ptBR }));
       }
     } catch (e) {
       console.error("Data inválida:", promo.date);
@@ -31,7 +33,7 @@ export default function Anuncio({ promo, isDetailPage = false, isPreview = false
     if (navigator.share) {
       navigator.share({
         title: promo.title,
-        text: `Confira esta promoção: ${promo.title}`,
+        text: promo.text,
         url: promo.shareUrl,
       }).catch(console.error);
     } else {
