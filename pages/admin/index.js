@@ -5,10 +5,9 @@ import { useState, useEffect } from 'react';
 import AdminForm from '../../components/AdminForm';
 import ScrapeAmazonForm from '../../components/ScrapeAmazonForm';
 import { getAboutData, getPromoById } from '../../lib/api';
-import { SITE_TITLE } from '../../config';
+import { SHORT_SITE_TITLE } from '@/config';
 
 function AdminPage({ aboutData, initialData }) {
-  const { data: session, status } = useSession();
   const [scrapedData, setScrapedData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -16,42 +15,18 @@ function AdminPage({ aboutData, initialData }) {
     setScrapedData(data);
   };
 
-  const loading = status === 'loading';
-
-  if (loading) {
-    return <p>Carregando...</p>;
-  }
-
-  if (!session) {
-    return (
-      <div className="min-h-screen bg-surface-100">
-        <Head>
-          <title>Admin Login | {SITE_TITLE}</title>
-        </Head>
-        <Header title={aboutData.title} />
-        <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md text-center">
-            <h1 className="text-2xl font-bold mb-4">Acesso Restrito</h1>
-            <p className="mb-6">Você precisa fazer login para acessar a área administrativa.</p>
-            <button onClick={() => signIn('github')} className="btn btn-primary w-full">
-              Login com GitHub
-            </button>
-          </div>
-        </main>
-      </div>
-    );
-  }
+  const title = `${SHORT_SITE_TITLE} - Painel Administrativo`
 
   return (
     <div className="min-h-screen bg-surface-100">
       <Head>
-        <title>Admin | {SITE_TITLE}</title>
+        <title>{title}</title>
       </Head>
-      <Header title={aboutData.title} />
+      <Header title={title} />
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="max-w-2xl mx-auto">
-          <h1 className="text-3xl font-bold mb-6">Painel Administrativo</h1>
           <ScrapeAmazonForm onScrapeSuccess={handleScrapeSuccess} onLoading={setIsLoading} />
+          <h2 className="text-2xl font-bold mb-4">Formulário</h2>
           <AdminForm scrapedData={scrapedData} isLoading={isLoading} setIsLoading={setIsLoading} initialData={initialData} />
         </div>
       </main>

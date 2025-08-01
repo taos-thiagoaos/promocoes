@@ -22,20 +22,19 @@ export default function Home({ allPromos: allPromosData, fixedLinks, fixedAnunci
   const currentPromos = allPromos.slice(startIndex, endIndex);
   
   const imageUrl = `${SITE_URL}${pageImage}`;
-  const pageTitle = `${SITE_TITLE} - Promoções`;
 
   return (
     <div className="min-h-screen bg-surface-100">
       <Head>
-        <title>{pageTitle}</title>
+        <title>{SITE_TITLE}</title>
         <meta name="description" content={aboutData.description} />
-        <meta property="og:title" content={pageTitle} />
+        <meta property="og:title" content={SITE_TITLE} />
         <meta property="og:description" content={aboutData.description} />
         <meta property="og:image" content={imageUrl} />
         <meta property="og:url" content={SITE_URL} />
         <meta property="twitter:card" content="summary_large_image" />
       </Head>
-      <Header title={pageTitle} />
+      <Header title={SITE_TITLE} />
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row">
           <div className="w-full lg:w-3/4">

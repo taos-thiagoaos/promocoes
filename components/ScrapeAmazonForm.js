@@ -39,7 +39,7 @@ export default function ScrapeAmazonForm({ onScrapeSuccess, onLoading }) {
           />
         </div>
         <button type="submit" className="w-full btn btn-primary">
-          Preparar Anúncio
+          Buscar Anúncio
         </button>
         {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
       </form>
