@@ -62,8 +62,7 @@ export async function handler(req, res) {
     // Extrai o nome da imagem e cria novo nome com extensão .webp
     const imageName = imageUrl.split('/').pop();
     const imageNameWithoutExt = imageName.split('.')[0];
-    const newImageName = `${imageNameWithoutExt}.webp`;
-    const githubImagePath = `public/images/anuncios/${newImageName}`;
+    const githubImagePath = `public/images/anuncios/${imageName}`;
 
     console.log('Atualizando imagem no GitHub:', githubImagePath);
 
@@ -90,7 +89,7 @@ export async function handler(req, res) {
       owner,
       repo,
       path: githubImagePath,
-      message: `[BOT] Otimiza imagem: ${newImageName}`,
+      message: `[BOT] Otimiza imagem: ${imageName}`,
       content: optimizedBuffer.toString('base64'),
       sha: existingSha, // Se existir, será uma atualização; se não, será criação
       branch: 'main',
