@@ -1,6 +1,6 @@
 import { withAllowedUsers } from '@/lib/auth';
 import { Octokit } from '@octokit/rest';
-import { slugify } from '@/lib/helpers';
+import { slugify, isDev } from '@/lib/helpers';
 
 const base64ToBuffer = (base64) => Buffer.from(base64.split(',')[1], 'base64');
 
@@ -15,12 +15,15 @@ async function handler(req, res) {
     return res.status(500).json({ error: 'Token do GitHub parece estar em formato inválido.' });
   }
 
-  const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
+  // Configuração do Octokit baseada no ambiente
+  const octokitConfig = {
+    auth: process.env.GITHUB_TOKEN,
+  };
+
+  const octokit = new Octokit(octokitConfig);
   const owner = 'taos-thiagoaos';
   const repo = 'promocoes';
-
-  console.log('GitHub Token length:', process.env.GITHUB_TOKEN?.length || 'undefined');
-  console.log('Target repository:', `${owner}/${repo}`);
+  
 
   try {
     // Verifica se o repositório existe e se temos acesso
@@ -51,42 +54,10 @@ async function handler(req, res) {
       }
     }
 
-    // Testa permissões criando um arquivo temporário
-    try {
-      const testPath = `test-${Date.now()}.txt`;
-      await octokit.repos.createOrUpdateFileContents({
-        owner,
-        repo,
-        path: testPath,
-        message: '[BOT] Teste de permissões',
-        content: Buffer.from('teste').toString('base64'),
-        branch: 'main',
-      });
-      
-      // Remove o arquivo de teste
-      const { data: testFile } = await octokit.repos.getContent({ owner, repo, path: testPath });
-      await octokit.repos.deleteFile({
-        owner,
-        repo,
-        path: testPath,
-        message: '[BOT] Remove arquivo de teste',
-        sha: testFile.sha,
-        branch: 'main',
-      });
-      
-      console.log('Teste de permissões bem-sucedido');
-    } catch (testError) {
-      console.error('Falha no teste de permissões:', testError.message);
-      return res.status(500).json({ 
-        error: `Token sem permissões de escrita no repositório: ${testError.message}` 
-      });
-    }
-
     const { title, text, link, image, startDate, coupon, id } = req.body;
     
     let finalImageUrl = req.body.imageUrl; // Para edições
 
-    // Se for uma nova imagem (base64), faz o upload
     if (image) {
       try {
         console.log('Processando imagem base64...');
@@ -105,76 +76,6 @@ async function handler(req, res) {
         
         const imageName = `${Date.now()}-${slugify(title.toLowerCase(), 30)}.${imageExtension}`;
         const imagePath = `public/images/anuncios/${imageName}`;
-
-        console.log('Uploading image:', imageName);
-        console.log('imagePath:', imagePath);
-        console.log('Image buffer size:', imageBuffer.length, 'bytes');
-
-        // Verifica se o diretório existe, se não, cria a estrutura primeiro
-        try {
-          await octokit.repos.getContent({
-            owner,
-            repo,
-            path: 'public/images/anuncios',
-          });
-          console.log('Diretório public/images/anuncios já existe');
-        } catch (dirError) {
-          if (dirError.status === 404) {
-            console.log('Criando estrutura de diretórios...');
-            
-            // Cria o diretório public primeiro
-            try {
-              await octokit.repos.getContent({ owner, repo, path: 'public' });
-            } catch (publicError) {
-              if (publicError.status === 404) {
-                // Cria um arquivo .gitkeep no diretório public
-                await octokit.repos.createOrUpdateFileContents({
-                  owner,
-                  repo,
-                  path: 'public/.gitkeep',
-                  message: '[BOT] Cria diretório public',
-                  content: Buffer.from('').toString('base64'),
-                  branch: 'main',
-                });
-                console.log('Diretório public criado');
-              }
-            }
-
-            // Cria o diretório public/images
-            try {
-              await octokit.repos.getContent({ owner, repo, path: 'public/images' });
-            } catch (imagesError) {
-              if (imagesError.status === 404) {
-                await octokit.repos.createOrUpdateFileContents({
-                  owner,
-                  repo,
-                  path: 'public/images/.gitkeep',
-                  message: '[BOT] Cria diretório images',
-                  content: Buffer.from('').toString('base64'),
-                  branch: 'main',
-                });
-                console.log('Diretório public/images criado');
-              }
-            }
-
-            // Cria o diretório public/images/anuncios
-            try {
-              await octokit.repos.getContent({ owner, repo, path: 'public/images/anuncios' });
-            } catch (anunciosError) {
-              if (anunciosError.status === 404) {
-                await octokit.repos.createOrUpdateFileContents({
-                  owner,
-                  repo,
-                  path: 'public/images/anuncios/.gitkeep',
-                  message: '[BOT] Cria diretório anuncios',
-                  content: Buffer.from('').toString('base64'),
-                  branch: 'main',
-                });
-                console.log('Diretório public/images/anuncios criado');
-              }
-            }
-          }
-        }
 
         await octokit.repos.createOrUpdateFileContents({
           owner,
@@ -206,8 +107,6 @@ async function handler(req, res) {
       coupon: coupon,
       store: 'Amazon',
     };
-
-    console.log('promoData data:', promoData);
 
     const jsonFileName = `anuncios-${startDate}.json`;
     const jsonPath = `data/${jsonFileName}`;
