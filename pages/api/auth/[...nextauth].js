@@ -4,6 +4,7 @@ import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { isDev } from '@/lib/helpers';
+import { userIsAdmin } from '@/pages/api/auth/auth-helpers';
 
 export const authOptions = {
   providers: [
@@ -58,10 +59,16 @@ export const authOptions = {
         token.login = user.login;
         token.isDev = true;
       }
+
+      
+
       return token;
     },
     async session({ session, token }) {
+      token.isAdmin = (session.user && userIsAdmin(session.user))
+
       session.user.username = token.login;
+      session.user.isAdmin = token.isAdmin;
       session.accessToken = token.accessToken;
       if (token.isDev) session.user.isDev = true;
       return session;

@@ -1,4 +1,4 @@
-import { withAllowedUsers } from '../../lib/auth';
+import { withAllowedUsers } from '@/pages/api/auth/auth-helpers';
 import sharp from 'sharp';
 import path from 'path';
 import fs from 'fs/promises';

@@ -1,6 +1,7 @@
 import { getServerSession } from 'next-auth';
-import allowedEmails from '@/data/allowed-emails.json';
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
+
+const allowedEmails = process.env.ADMIN_USERS ? process.env.ADMIN_USERS.split(',') : [];
 
 export const isUserAllowed = async (req, res) => {
   const session = await getServerSession(req, res, authOptions);

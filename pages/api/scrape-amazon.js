@@ -1,7 +1,7 @@
 
 
 import * as cheerio from 'cheerio';
-import { withAllowedUsers } from '../../lib/auth';
+import { withAllowedUsers } from '@/pages/api/auth/auth-helpers';
 import { isDev } from '@/lib/helpers';
 import { fetch, Agent, setGlobalDispatcher } from 'undici';
 

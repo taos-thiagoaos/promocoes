@@ -1,5 +1,5 @@
 import sharp from 'sharp';
-import { withAllowedUsers } from '../../lib/auth';
+import { withAllowedUsers } from '@/pages/api/auth/auth-helpers';
 
 export async function handler(req, res) {
   const { image } = req.body; // Recebe a imagem em base64

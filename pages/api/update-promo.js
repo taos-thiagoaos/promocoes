@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
-import { withAllowedUsers } from '../../lib/auth';
+import { withAllowedUsers } from '@/pages/api/auth/auth-helpers';
 
 export async function handler(req, res) {
   const { id, date, newText } = req.body;

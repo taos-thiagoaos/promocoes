@@ -74,8 +74,6 @@ export default function AdminForm({ scrapedData, isLoading, setIsLoading, initia
       store: data.store || 'AMAZON',
     });
 
-    console.log('Preview data set from form:', promoModel);
-
     setPreviewData(promoModel);
 
   }
