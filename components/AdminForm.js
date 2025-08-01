@@ -168,26 +168,28 @@ export default function AdminForm({ scrapedData, isLoading, setIsLoading, initia
         </form>
       </div>
 
-      {previewData && (
-        <div>
-          <h2 className="text-2xl font-bold mb-4">Pré-visualização</h2>
-          <Anuncio promo={previewData} isPreview={true} onUpdatePreview={handleUpdatePreview} />
-          <div className="mt-6">
-            <button onClick={handleSubmit} disabled={isLoading} className="w-full btn btn-success disabled:opacity-50">
-              {isLoading 
-                ? 'Enviando para o GitHub...' 
-                : formData.id 
-                  ? 'Atualizar no GitHub' 
-                  : 'Adicionar novo anúncio ao GitHub'}
-            </button>
+      <div className="grid grid-cols-1">      
+        <h2 className="text-2xl font-bold mb-4">Pré-visualização</h2>
+        {previewData && (
+          <div>          
+            <Anuncio promo={previewData} isPreview={true} onUpdatePreview={handleUpdatePreview} />
+            <div className="mt-6">
+              <button onClick={handleSubmit} disabled={isLoading} className="w-full btn btn-success disabled:opacity-50">
+                {isLoading 
+                  ? 'Enviando para o GitHub...' 
+                  : formData.id 
+                    ? 'Atualizar no GitHub' 
+                    : 'Adicionar novo anúncio ao GitHub'}
+              </button>
+            </div>
+            {status.message && (
+              <p className={`mt-4 text-sm text-center ${status.error ? 'text-red-600' : 'text-green-600'}`}>
+                {status.message}
+              </p>
+            )}
           </div>
-           {status.message && (
-            <p className={`mt-4 text-sm text-center ${status.error ? 'text-red-600' : 'text-green-600'}`}>
-              {status.message}
-            </p>
-          )}
+        )}
         </div>
-      )}
     </div>
   );
 }
