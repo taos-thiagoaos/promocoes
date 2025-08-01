@@ -6,9 +6,8 @@ import AdminForm from '../../components/AdminForm';
 import ScrapeAmazonForm from '../../components/ScrapeAmazonForm';
 import { getAboutData, getPromoById } from '../../lib/api';
 import { SITE_TITLE } from '../../config';
-import { isUserAllowed } from '../../lib/auth';
 
-export default function AdminPage({ aboutData, initialData }) {
+function AdminPage({ aboutData, initialData }) {
   const { data: session, status } = useSession();
   const [scrapedData, setScrapedData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -65,18 +64,9 @@ AdminPage.auth = {
   loading: <div>Carregando...</div>,
 }
 
+export default AdminPage
+
 export async function getServerSideProps(context) {
-  // const allowed = await isUserAllowed(context.req, context.res);
-
-  // if (!allowed) {
-  //   return {
-  //     redirect: {
-  //       destination: '/',
-  //       permanent: false,
-  //     },
-  //   };
-  // }
-
   const { edit, date } = context.query;
   let promoData = null;
 
