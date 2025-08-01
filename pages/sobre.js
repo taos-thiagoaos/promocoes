@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import Header from '../components/Header';
 import { getAboutData } from '../lib/api';
-import { SITE_URL, SITE_TITLE } from '../config';
+import { SITE_URL, SITE_TITLE, SHORT_SITE_TITLE } from '../config';
 
 export default function Sobre({ aboutData, pageImage }) {
   const imageUrl = `${SITE_URL}${pageImage}`;
@@ -18,7 +18,7 @@ export default function Sobre({ aboutData, pageImage }) {
         <meta property="og:url" content={`${SITE_URL}/sobre`} />
         <meta property="twitter:card" content="summary_large_image" />
       </Head>
-      <Header title={pageTitle} />
+      <Header title={SITE_TITLE} />
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white rounded-xl shadow-lg p-8 md:p-12 max-w-4xl mx-auto">
           <h1 className="text-3xl font-bold mb-4">{aboutData.title || "Título não encontrado."}</h1>

@@ -122,8 +122,9 @@ export default function AdminForm({ scrapedData, isLoading, setIsLoading, initia
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">      
       <div>
+        <h2 className="text-2xl font-bold mb-4">Formulário</h2>
         <form id="admin-promo-form" onSubmit={handlePreview} className="space-y-6 bg-white p-8 rounded-lg shadow-md">
         {/* Campos do formulário... */}
         <div>

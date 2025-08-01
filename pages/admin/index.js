@@ -28,7 +28,6 @@ function AdminPage({ aboutData, initialData }) {
           <div className="max-w-2xl mx-auto mb-8">
             <ScrapeAmazonForm onScrapeSuccess={handleScrapeSuccess} onLoading={setIsLoading} />
           </div>
-          <h2 className="text-2xl font-bold mb-4">Formulário</h2>
           <AdminForm scrapedData={scrapedData} isLoading={isLoading} setIsLoading={setIsLoading} initialData={initialData} />
         </div>
       </main>

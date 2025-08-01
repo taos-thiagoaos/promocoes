@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import Header from '../../../components/Header';
 import Anuncio from '../../../components/Anuncio';
 import { getAllPromos, getPromoBySlug, getSuggestedPromos, getFixedLinks, getFixedAnuncios, getAboutData, getAllStores } from '../../../lib/api';
-import { SITE_URL, SITE_TITLE } from '../../../config';
+import { SITE_URL, SHORT_SITE_TITLE } from '@/config';
 import { AnuncioModel } from '../../../models/AnuncioModel';
 
 export default function AnuncioPage({ promo: promoData, suggested: suggestedData, fixedLinks, fixedAnuncios, aboutData, stores }) {
@@ -22,7 +22,7 @@ export default function AnuncioPage({ promo: promoData, suggested: suggestedData
     return <div>Anúncio não encontrado.</div>;
   }
 
-  const pageTitle = `${promo.title} | ${SITE_TITLE}`;
+  const pageTitle = `${SHORT_SITE_TITLE} - ${promo.title}`;
   const imageUrl = `${SITE_URL}${promo.imageUrl}`;
 
   return (
@@ -36,7 +36,7 @@ export default function AnuncioPage({ promo: promoData, suggested: suggestedData
         <meta property="og:url" content={promo.shareUrl} />
         <meta property="twitter:card" content="summary_large_image" />
       </Head>
-      <Header title={aboutData.title} />
+      <Header />
       <main className="container mx-auto p-4">
         <Anuncio promo={promo} isDetailPage={true} onEdit={handleEdit} />
 

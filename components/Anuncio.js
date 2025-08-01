@@ -77,7 +77,10 @@ export default function Anuncio({ promo, isDetailPage = false, isPreview = false
     setUpdateSuccess('');
     try {
       let message;
-      if (isPreview) {
+
+      console.log("Otimização de imagem iniciada:", promo);
+
+      if (promo.imageUrl.startsWith('data:')) {
         const data = await optimizeBase64Image(promo.imageUrl);
         onUpdatePreview({ imageUrl: data.optimizedImage });
         message = "Imagem da pré-visualização otimizada!";
