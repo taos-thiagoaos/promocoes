@@ -76,10 +76,6 @@ export default function Anuncio({ promo, isDetailPage = false, isPreview = false
     setError('');
     setUpdateSuccess('');
     try {
-      let message;
-
-      console.log("Otimização de imagem iniciada:", promo);
-
       let data;
 
       if (promo.imageUrl.startsWith('data:')) {
@@ -91,7 +87,7 @@ export default function Anuncio({ promo, isDetailPage = false, isPreview = false
         data = await optimizeRepoImage(promo.imageUrl);
       }
       
-      message = `Imagem da pré-visualização otimizada. Otimização de ${data.reduceSize} bytes!`;
+      const message = `Imagem da pré-visualização otimizada. Otimização de ${data.reduceSize} bytes!`;
 
       setUpdateSuccess(message);
     } catch (e) {
