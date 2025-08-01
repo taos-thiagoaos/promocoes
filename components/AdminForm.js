@@ -122,8 +122,9 @@ export default function AdminForm({ scrapedData, isLoading, setIsLoading, initia
   };
 
   return (
-    <>
-      <form id="admin-promo-form" onSubmit={handlePreview} className="space-y-6 bg-white p-8 rounded-lg shadow-md">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div>
+        <form id="admin-promo-form" onSubmit={handlePreview} className="space-y-6 bg-white p-8 rounded-lg shadow-md">
         {/* Campos do formulário... */}
         <div>
           <label htmlFor="title" className="block text-sm font-medium text-gray-700">Título do Anúncio</label>
@@ -143,13 +144,15 @@ export default function AdminForm({ scrapedData, isLoading, setIsLoading, initia
             <input type="file" name="image" id="image" required accept="image/png, image/jpeg, image/webp" className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" onChange={handleFileChange} />
           </div>
         )}
-        <div>
-          <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">Data</label>
-          <input type="date" name="startDate" id="startDate" value={formData.startDate} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" onChange={handleInputChange} />
-        </div>
-        <div>
-          <label htmlFor="coupon" className="block text-sm font-medium text-gray-700">Cupom</label>
-          <input type="url" name="coupon" id="coupon" value={formData.coupon} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" onChange={handleInputChange} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">Data</label>
+            <input type="date" name="startDate" id="startDate" value={formData.startDate} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" onChange={handleInputChange} />
+          </div>
+          <div>
+            <label htmlFor="coupon" className="block text-sm font-medium text-gray-700">Cupom</label>
+            <input type="text" name="coupon" id="coupon" value={formData.coupon} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" onChange={handleInputChange} />
+          </div>
         </div>
         <div>
           <button type="submit" disabled={isLoading} className="w-full btn btn-secondary disabled:opacity-50">
@@ -161,10 +164,11 @@ export default function AdminForm({ scrapedData, isLoading, setIsLoading, initia
             {status.message}
           </p>
         )}
-      </form>
+        </form>
+      </div>
 
       {previewData && (
-        <div className="mt-12">
+        <div>
           <h2 className="text-2xl font-bold mb-4">Pré-visualização</h2>
           <Anuncio promo={previewData} isPreview={true} onUpdatePreview={handleUpdatePreview} />
           <div className="mt-6">
@@ -179,6 +183,6 @@ export default function AdminForm({ scrapedData, isLoading, setIsLoading, initia
           )}
         </div>
       )}
-    </>
+    </div>
   );
 }

@@ -2,8 +2,37 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
 body {
   @apply bg-surface-100 text-surface-900;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  word-wrap: break-word;
+}
+
+/* Evita overflow horizontal */
+html, body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* Garante que imagens não quebrem o layout */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Garante que containers não ultrapassem a largura da tela */
+.container {
+  max-width: 100%;
 }
 
 @layer components {
