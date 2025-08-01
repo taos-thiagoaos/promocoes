@@ -62,7 +62,7 @@ export default function AdminForm({ scrapedData, isLoading, setIsLoading, initia
 
   const previewDataFromFormData = (data) => {
     const promoModel = new AnuncioModel({
-      id: data.id ||'preview-id',
+      id: data.id,
       title: data.title,
       date: data.startDate,
       text: data.text,
@@ -174,7 +174,11 @@ export default function AdminForm({ scrapedData, isLoading, setIsLoading, initia
           <Anuncio promo={previewData} isPreview={true} onUpdatePreview={handleUpdatePreview} />
           <div className="mt-6">
             <button onClick={handleSubmit} disabled={isLoading} className="w-full btn btn-success disabled:opacity-50">
-              {isLoading ? 'Enviando para o GitHub...' : 'Confirmar e Adicionar ao GitHub'}
+              {isLoading 
+                ? 'Enviando para o GitHub...' 
+                : formData.id 
+                  ? 'Atualizar no GitHub' 
+                  : 'Adicionar novo anúncio ao GitHub'}
             </button>
           </div>
            {status.message && (

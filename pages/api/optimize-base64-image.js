@@ -9,9 +9,10 @@ export async function handler(req, res) {
   }
 
   try {
-    const imageBuffer = Buffer.from(image.split(',')[1], 'base64');
+    const originalBuffer = Buffer.from(image.split(',')[1], 'base64');
+    const originalSize = originalBuffer.length;
 
-    const optimizedBuffer = await sharp(imageBuffer)
+    const optimizedBuffer = await sharp(originalBuffer)
       .resize({
         width: 1200,
         height: 630,
@@ -23,8 +24,10 @@ export async function handler(req, res) {
 
     // Retorna a imagem otimizada como uma string base64
     const optimizedImage = `data:image/webp;base64,${optimizedBuffer.toString('base64')}`;
+    const optimizedSize = optimizedBuffer.length;
+    const reduceSize = originalSize - optimizedSize;
 
-    return res.status(200).json({ optimizedImage });
+    return res.status(200).json({ optimizedImage, reduceSize });
 
   } catch (error) {
     console.error("Erro ao otimizar a imagem base64:", error);

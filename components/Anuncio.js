@@ -80,15 +80,19 @@ export default function Anuncio({ promo, isDetailPage = false, isPreview = false
 
       console.log("Otimização de imagem iniciada:", promo);
 
+      let data;
+
       if (promo.imageUrl.startsWith('data:')) {
-        const data = await optimizeBase64Image(promo.imageUrl);
-        onUpdatePreview({ imageUrl: data.optimizedImage });
-        message = "Imagem da pré-visualização otimizada!";
+        console.log("aqui base 64");
+        data = await optimizeBase64Image(promo.imageUrl);
+        onUpdatePreview({ imageBase64: data.optimizedImage });
       } else {
-        const data = await optimizeRepoImage(promo.imageUrl);
-        message = data.message;
-        setTimeout(() => window.location.reload(), 1500);
+        console.log("aqui url " + promo.imageUrl);
+        data = await optimizeRepoImage(promo.imageUrl);
       }
+      
+      message = `Imagem da pré-visualização otimizada. Otimização de ${data.reduceSize} bytes!`;
+
       setUpdateSuccess(message);
     } catch (e) {
       setError(e.message);
