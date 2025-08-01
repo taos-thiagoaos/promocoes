@@ -20,8 +20,6 @@ export default function AdminForm({ scrapedData, isLoading, setIsLoading, initia
 
   useEffect(() => {
     if (scrapedData) {
-      console.log('Scraped data received:', scrapedData);
-
       const data = { ...formData, ...{
         title: scrapedData.title,
         text: scrapedData.description,

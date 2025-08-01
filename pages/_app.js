@@ -21,9 +21,6 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
 function Auth({ children, authData }) {
   const { status, data: session } = useSession({ required: true });
 
-  console.log("Auth status:", status);
-  console.log("Session data:", session);
-
   if (status === "loading") {
     return authData.loading || (
       <div style={{ 
