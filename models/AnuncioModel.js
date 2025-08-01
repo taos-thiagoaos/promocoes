@@ -1,4 +1,4 @@
-import { slugify } from '../lib/helpers';
+import { slugify } from '@/lib/helpers';
 import { SITE_URL } from '../config';
 
 /**

@@ -53,7 +53,7 @@ export default function AdminPage({ aboutData, initialData }) {
         <div className="max-w-2xl mx-auto">
           <h1 className="text-3xl font-bold mb-6">Painel Administrativo</h1>
           <ScrapeAmazonForm onScrapeSuccess={handleScrapeSuccess} onLoading={setIsLoading} />
-          <AdminForm scrapedData={scrapedData} isLoading={isLoading} initialData={initialData} />
+          <AdminForm scrapedData={scrapedData} isLoading={isLoading} setIsLoading={setIsLoading} initialData={initialData} />
         </div>
       </main>
     </div>

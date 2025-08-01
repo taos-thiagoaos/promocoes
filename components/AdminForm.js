@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Anuncio from './Anuncio';
 import { AnuncioModel } from '../models/AnuncioModel';
 
-export default function AdminForm({ scrapedData, isLoading, initialData }) {
+export default function AdminForm({ scrapedData, isLoading, setIsLoading, initialData }) {
   const [formData, setFormData] = useState({
     id: null,
     title: '',
@@ -10,6 +10,8 @@ export default function AdminForm({ scrapedData, isLoading, initialData }) {
     link: '',
     image: null,
     imageUrl: null,
+    imageBase64: null,
+    coupon: '',
     startDate: '',
     store: 'AMAZON',
   });
@@ -18,24 +20,29 @@ export default function AdminForm({ scrapedData, isLoading, initialData }) {
 
   useEffect(() => {
     if (scrapedData) {
-      setFormData(prev => ({ ...prev, ...{
+      console.log('Scraped data received:', scrapedData);
+
+      const data = { ...formData, ...{
         title: scrapedData.title,
         text: scrapedData.description,
         imageBase64: scrapedData.image,
         link: scrapedData.link,
         startDate: new Date().toISOString().split('T')[0],
-      } }));
+      }}
 
-      previewDataFromFormData();
+      setFormData(data);
+
+      previewDataFromFormData(data);
     }
   }, [scrapedData]);
 
   useEffect(() => {
     if (initialData) {
       const { date, ...rest } = initialData;
-      setFormData({ ...rest, startDate: date });
+      const data = { ...rest, startDate: date }
+      setFormData(data);
       
-      previewDataFromFormData();
+      previewDataFromFormData(data);
     }
   }, [initialData]);
 
@@ -55,28 +62,31 @@ export default function AdminForm({ scrapedData, isLoading, initialData }) {
     }
   };
 
-  const previewDataFromFormData = () => {
+  const previewDataFromFormData = (data) => {
     const promoModel = new AnuncioModel({
-      id: formData.id ||'preview-id',
-      title: formData.title,
-      date: formData.startDate,
-      text: formData.text,
-      link: formData.link,
-      imageUrl: formData.image || formData.imageBase64 || formData.imageUrl,
-      coupon: formData.coupon,
-      store: formData.store || 'AMAZON',
+      id: data.id ||'preview-id',
+      title: data.title,
+      date: data.startDate,
+      text: data.text,
+      link: data.link,
+      imageUrl: data.image || data.imageBase64 || data.imageUrl,
+      coupon: data.coupon,
+      store: data.store || 'AMAZON',
     });
+
+    console.log('Preview data set from form:', promoModel);
+
     setPreviewData(promoModel);
 
   }
 
   const handlePreview = (e) => {
     e.preventDefault();
-    if (!formData.title || !formData.startDate || !formData.image) {
+    if (!formData.title || !formData.startDate) {
       setStatus({ message: 'Título, Data de Início e Imagem são obrigatórios para a pré-visualização.', error: true });
       return;
     }
-    previewDataFromFormData();
+    previewDataFromFormData(formData);
     setStatus({ message: '', error: false });
   };
   
@@ -89,7 +99,7 @@ export default function AdminForm({ scrapedData, isLoading, initialData }) {
     setIsLoading(true);
     setStatus({ message: '', error: false });
 
-    formData.image = formData.image || formData.imageBase64;
+    formData.image = formData.image || formData.imageBase64 || formData.imageUrl;
 
     try {
       const response = await fetch('/api/add-promo', {
