@@ -43,7 +43,7 @@ export class AnuncioModel {
 
   get shareNavitatorMessage() {
     const formattedText = htmlToTextFormat(this.text);
-    return `\n${formattedText}\n\nAcesse na loja ${this.store}: ${this.link}`;
+    return `\n${formattedText}\n\nAcesse na loja ${this.store}: ${this.link}\nOu no nosso site: `;
   }
 
   get shareClipboardMessage() {
