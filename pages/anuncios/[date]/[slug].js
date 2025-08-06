@@ -15,6 +15,7 @@ import {
 } from '../../../lib/api';
 import { SITE_URL, SHORT_SITE_TITLE } from '@/config';
 import { AnuncioModel } from '../../../models/AnuncioModel';
+import { htmlToTextFormat } from '@/lib/helpers';
 
 export default function AnuncioPage({
   promo: promoData,
@@ -43,9 +44,9 @@ export default function AnuncioPage({
     <div className="min-h-screen bg-surface-100">
       <Head>
         <title>{pageTitle}</title>
-        <meta name="description" content={promo.text.substring(0, 155)} />
+        <meta name="description" content={htmlToTextFormat(promo.text).substring(0, 155)} />
         <meta property="og:title" content={pageTitle} />
-        <meta property="og:description" content={promo.text.substring(0, 155)} />
+        <meta property="og:description" content={htmlToTextFormat(promo.text).substring(0, 155)} />
         <meta property="og:image" content={promo.shareImageUrl} />
         <meta property="og:url" content={promo.shareUrl} />
         <meta property="twitter:card" content="summary_large_image" />

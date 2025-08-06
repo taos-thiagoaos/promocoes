@@ -18,7 +18,7 @@ export const generateText = (title) => {
   return fetchApi('/api/generate-text', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title }),
+    body: JSON.stringify({ prompt: title }),
   });
 };
 

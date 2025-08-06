@@ -1,4 +1,4 @@
-import { slugify } from '@/lib/helpers';
+import { slugify, htmlToTextFormat } from '@/lib/helpers';
 import { SITE_URL } from '../config';
 
 /**
@@ -39,5 +39,10 @@ export class AnuncioModel {
    */
   get shareImageUrl() {
     return `${SITE_URL}${this.imageUrl}`;
+  }
+
+  get shareMessage() {
+    const formattedText = htmlToTextFormat(this.text);
+    return `${this.title}\n\n${formattedText}\n\nAcesse no site: ${this.shareUrl}\nOu direto na ${this.store}: ${this.link}`;
   }
 }

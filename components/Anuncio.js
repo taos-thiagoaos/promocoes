@@ -25,6 +25,10 @@ export default function Anuncio({
   const [generatedText, setGeneratedText] = useState('');
   const [error, setError] = useState('');
   const [updateSuccess, setUpdateSuccess] = useState('');
+  const [showPromptModal, setShowPromptModal] = useState(false);
+  const [customPrompt, setCustomPrompt] = useState(
+    `Você é um especialista em marketing para blogs de promoções. Crie um texto curto e persuasivo para um post de blog sobre o seguinte produto: '${promo.title}'. Use emojis para deixar o texto mais atrativo. Para formatação, use apenas as tags HTML <strong> para negrito e <em> para itálico. Para quebras de linha, use a tag <br>. Crie um senso de urgência e não inclua o link do produto no texto.`
+  );
 
   useEffect(() => {
     try {
@@ -39,35 +43,21 @@ export default function Anuncio({
     }
   }, [promo.date]);
 
-  const htmlToWhatsappFormat = (html) => {
-    let text = html
-      .replace(/<strong>(.*?)<\/strong>/gi, '*$1*')
-      .replace(/<b>(.*?)<\/b>/gi, '*$1*')
-      .replace(/<em>(.*?)<\/em>/gi, '_$1_')
-      .replace(/<i>(.*?)<\/i>/gi, '_$1_')
-      .replace(/<u>(.*?)<\/u>/gi, '~$1~')
-      .replace(/<br\s*\/?>/gi, '\n')
-      .replace(/<\/?[^>]+(>|$)/g, ''); // Remove outras tags
-    return text;
-  };
-
   const handleShare = (e) => {
     e.preventDefault();
     e.stopPropagation();
-
-    const formattedText = htmlToWhatsappFormat(promo.text);
 
     if (navigator.share) {
       navigator
         .share({
           title: promo.title,
-          text: formattedText,
+          text: promo.shareMessage,
           url: promo.shareUrl,
         })
         .catch(console.error);
     } else {
-      navigator.clipboard.writeText(promo.shareUrl);
-      alert('Link copiado para a área de transferência!');
+      navigator.clipboard.writeText(promo.shareMessage);
+      alert('Texto copiado para a área de transferência!');
     }
   };
 
@@ -90,11 +80,12 @@ export default function Anuncio({
     setError('');
     setUpdateSuccess('');
     try {
-      const data = await generateText(promo.title);
+      const data = await generateText(customPrompt);
       setGeneratedText(data.text);
       if (isPreview) {
         onUpdatePreview({ text: data.text });
       }
+      setShowPromptModal(false);
     } catch (e) {
       setError(e.message);
     } finally {
@@ -110,11 +101,9 @@ export default function Anuncio({
       let data;
 
       if (promo.imageUrl.startsWith('data:')) {
-        console.log('aqui base 64');
         data = await optimizeBase64Image(promo.imageUrl);
         onUpdatePreview({ imageBase64: data.optimizedImage });
       } else {
-        console.log('aqui url ' + promo.imageUrl);
         data = await optimizeRepoImage(promo.imageUrl);
       }
 
@@ -240,7 +229,7 @@ export default function Anuncio({
             {session && isPreview && (
               <>
                 <button
-                  onClick={handleGenerateText}
+                  onClick={() => setShowPromptModal(true)}
                   disabled={isLoading}
                   className="btn btn-secondary flex items-center justify-center gap-2 disabled:opacity-50"
                 >
@@ -253,6 +242,33 @@ export default function Anuncio({
                 >
                   🔧 {isLoading ? 'Otimizando...' : 'Otimizar Imagem'}
                 </button>
+                {showPromptModal && (
+                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white rounded-xl p-6 w-full max-w-lg shadow-xl">
+                      <h2 className="text-xl font-bold mb-4">Personalizar Prompt</h2>
+                      <textarea
+                        className="w-full h-40 p-2 border rounded mb-4"
+                        value={customPrompt}
+                        onChange={(e) => setCustomPrompt(e.target.value)}
+                      />
+                      <div className="flex justify-end gap-2">
+                        <button
+                          className="btn btn-secondary"
+                          onClick={() => setShowPromptModal(false)}
+                        >
+                          Cancelar
+                        </button>
+                        <button
+                          className="btn btn-primary"
+                          onClick={handleGenerateText}
+                          disabled={isLoading}
+                        >
+                          Enviar Prompt
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </>
             )}
           </div>
