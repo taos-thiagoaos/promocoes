@@ -32,4 +32,12 @@ export class AnuncioModel {
   get shareUrl() {
     return `${SITE_URL}${this.internalLink}`;
   }
+
+  /**
+   * Retorna a URL completa da imagem para compartilhamento.
+   * @returns {string} A URL completa.
+   */
+  get shareImageUrl() {
+    return `${SITE_URL}${this.imageUrl}`;
+  }
 }

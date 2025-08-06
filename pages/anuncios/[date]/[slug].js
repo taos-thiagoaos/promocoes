@@ -23,7 +23,6 @@ export default function AnuncioPage({ promo: promoData, suggested: suggestedData
   }
 
   const pageTitle = `${SHORT_SITE_TITLE} - ${promo.title}`;
-  const imageUrl = `${SITE_URL}${promo.imageUrl}`;
 
   return (
     <div className="min-h-screen bg-surface-100">
@@ -32,7 +31,7 @@ export default function AnuncioPage({ promo: promoData, suggested: suggestedData
         <meta name="description" content={promo.text.substring(0, 155)} />
         <meta property="og:title" content={pageTitle} />
         <meta property="og:description" content={promo.text.substring(0, 155)} />
-        <meta property="og:image" content={imageUrl} />
+        <meta property="og:image" content={promo.shareImageUrl} />
         <meta property="og:url" content={promo.shareUrl} />
         <meta property="twitter:card" content="summary_large_image" />
       </Head>
