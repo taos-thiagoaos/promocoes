@@ -21,7 +21,7 @@ async function handler(req, res) {
     });
 
     const promos = JSON.parse(Buffer.from(fileData.content, 'base64').toString());
-    const updatedPromos = promos.filter(promo => promo.id !== id);
+    const updatedPromos = promos.filter((promo) => promo.id !== id);
 
     if (promos.length === updatedPromos.length) {
       return res.status(404).json({ error: `Anúncio com ID ${id} não encontrado.` });

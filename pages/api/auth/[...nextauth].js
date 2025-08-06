@@ -1,8 +1,7 @@
-
-import NextAuth from "next-auth";
-import GithubProvider from "next-auth/providers/github";
-import GoogleProvider from "next-auth/providers/google";
-import CredentialsProvider from "next-auth/providers/credentials";
+import NextAuth from 'next-auth';
+import GithubProvider from 'next-auth/providers/github';
+import GoogleProvider from 'next-auth/providers/google';
+import CredentialsProvider from 'next-auth/providers/credentials';
 import { isDev } from '@/lib/helpers';
 import { userIsAdmin } from '@/pages/api/auth/auth-helpers';
 
@@ -17,33 +16,35 @@ export const authOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       authorization: {
         params: {
-          prompt: "consent",
-          access_type: "offline",
-          response_type: "code"
-        }
-      }
+          prompt: 'consent',
+          access_type: 'offline',
+          response_type: 'code',
+        },
+      },
     }),
-    ...(isDev ? [
-      CredentialsProvider({
-        name: "Dev Login",
-        credentials: {
-          email: { label: "Email", type: "email", placeholder: "seu@email.com" },
-        },
-        async authorize(credentials) {
-          if (credentials?.email) {
-            return {
-              id: credentials.email,
-              name: credentials.email.split('@')[0],
-              email: credentials.email,
-              login: credentials.email.split('@')[0],
-              image: null,
-              isDev: true,
-            };
-          }
-          return null;
-        },
-      })
-    ] : [])
+    ...(isDev
+      ? [
+          CredentialsProvider({
+            name: 'Dev Login',
+            credentials: {
+              email: { label: 'Email', type: 'email', placeholder: 'seu@email.com' },
+            },
+            async authorize(credentials) {
+              if (credentials?.email) {
+                return {
+                  id: credentials.email,
+                  name: credentials.email.split('@')[0],
+                  email: credentials.email,
+                  login: credentials.email.split('@')[0],
+                  image: null,
+                  isDev: true,
+                };
+              }
+              return null;
+            },
+          }),
+        ]
+      : []),
   ],
   secret: process.env.NEXTAUTH_SECRET,
   trustHost: true,
@@ -60,12 +61,10 @@ export const authOptions = {
         token.isDev = true;
       }
 
-      
-
       return token;
     },
     async session({ session, token }) {
-      token.isAdmin = (session.user && userIsAdmin(session.user))
+      token.isAdmin = session.user && userIsAdmin(session.user);
 
       session.user.username = token.login;
       session.user.isAdmin = token.isAdmin;

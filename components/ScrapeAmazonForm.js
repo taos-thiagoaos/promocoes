@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { scrapeAmazonUrl } from '@/services/adminApi';
 
@@ -14,7 +13,7 @@ export default function ScrapeAmazonForm({ onScrapeSuccess, onLoading }) {
     try {
       const data = await scrapeAmazonUrl(url);
 
-      onScrapeSuccess({...{link: url},...data});
+      onScrapeSuccess({ ...{ link: url }, ...data });
     } catch (err) {
       setError(err.message);
     } finally {
@@ -27,7 +26,9 @@ export default function ScrapeAmazonForm({ onScrapeSuccess, onLoading }) {
       <h2 className="text-2xl font-bold mb-4">Obter dados da Amazon</h2>
       <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded-lg shadow-md">
         <div>
-          <label htmlFor="amazon-url" className="block text-sm font-medium text-gray-700">URL do Produto Amazon</label>
+          <label htmlFor="amazon-url" className="block text-sm font-medium text-gray-700">
+            URL do Produto Amazon
+          </label>
           <input
             type="url"
             id="amazon-url"

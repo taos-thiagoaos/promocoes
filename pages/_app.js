@@ -1,6 +1,6 @@
 import '../styles/globals.css';
-import { SessionProvider } from "next-auth/react";
-import { useSession } from "next-auth/react";
+import { SessionProvider } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import Head from 'next/head';
@@ -25,25 +25,29 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
 function Auth({ children, authData }) {
   const { status, data: session } = useSession({ required: true });
 
-  if (status === "loading") {
-    return authData.loading || (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        minHeight: '50vh' 
-      }}>
-        <p>Carregando...</p>
-      </div>
+  if (status === 'loading') {
+    return (
+      authData.loading || (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            minHeight: '50vh',
+          }}
+        >
+          <p>Carregando...</p>
+        </div>
+      )
     );
   }
 
-  if (status === "unauthenticated") {
+  if (status === 'unauthenticated') {
     return <Redirect to="/auth/login" />;
   }
 
-  if (authData.role === "admin" && !session.user.isAdmin) {
-    console.log("Usuário não é admin, redirecionando...");
+  if (authData.role === 'admin' && !session.user.isAdmin) {
+    console.log('Usuário não é admin, redirecionando...');
     return <Redirect to="/" />;
   }
 
@@ -60,12 +64,14 @@ function Redirect({ to }) {
   }, [to, router]);
 
   return (
-    <div style={{ 
-      display: 'flex', 
-      justifyContent: 'center', 
-      alignItems: 'center', 
-      minHeight: '50vh' 
-    }}>
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '50vh',
+      }}
+    >
       <p>Redirecionando...</p>
     </div>
   );

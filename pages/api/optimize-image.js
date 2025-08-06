@@ -102,11 +102,10 @@ export async function handler(req, res) {
 
     return res.status(200).json({
       optimizedImage,
-      reduceSize
+      reduceSize,
     });
-
   } catch (error) {
-    console.error("Erro ao otimizar a imagem:", error);
+    console.error('Erro ao otimizar a imagem:', error);
     return res.status(500).json({ error: `Falha ao otimizar a imagem: ${error.message}` });
   }
 }

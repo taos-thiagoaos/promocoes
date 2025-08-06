@@ -4,23 +4,36 @@ import Header from '../components/Header';
 import Anuncio from '../components/Anuncio';
 import Sidebar from '../components/Sidebar';
 import Paginacao from '../components/Paginacao';
-import { getAllPromos, getFixedLinks, getFixedAnuncios, getAboutData, getAllStores } from '../lib/api';
+import {
+  getAllPromos,
+  getFixedLinks,
+  getFixedAnuncios,
+  getAboutData,
+  getAllStores,
+} from '../lib/api';
 import { SITE_URL, SITE_TITLE } from '../config';
 import { AnuncioModel } from '../models/AnuncioModel';
 
 const PROMOS_PER_PAGE = 20;
 
-export default function Home({ allPromos: allPromosData, fixedLinks, fixedAnuncios, aboutData, stores, pageImage }) {
+export default function Home({
+  allPromos: allPromosData,
+  fixedLinks,
+  fixedAnuncios,
+  aboutData,
+  stores,
+  pageImage,
+}) {
   const [currentPage, setCurrentPage] = useState(1);
 
   // Re-hidrata os dados brutos em instâncias do modelo, usando useMemo para performance
-  const allPromos = useMemo(() => allPromosData.map(p => new AnuncioModel(p)), [allPromosData]);
+  const allPromos = useMemo(() => allPromosData.map((p) => new AnuncioModel(p)), [allPromosData]);
 
   const totalPages = Math.ceil(allPromos.length / PROMOS_PER_PAGE);
   const startIndex = (currentPage - 1) * PROMOS_PER_PAGE;
   const endIndex = startIndex + PROMOS_PER_PAGE;
   const currentPromos = allPromos.slice(startIndex, endIndex);
-  
+
   const imageUrl = `${SITE_URL}${pageImage}`;
 
   return (
@@ -39,9 +52,7 @@ export default function Home({ allPromos: allPromosData, fixedLinks, fixedAnunci
         <div className="flex flex-col lg:flex-row">
           <div className="w-full lg:w-3/4">
             {currentPromos.length > 0 ? (
-              currentPromos.map((promo) => (
-                <Anuncio key={promo.id} promo={promo} />
-              ))
+              currentPromos.map((promo) => <Anuncio key={promo.id} promo={promo} />)
             ) : (
               <div className="bg-white rounded-xl shadow-lg p-8 text-center">
                 <h2 className="text-2xl font-bold">Nenhuma promoção encontrada.</h2>

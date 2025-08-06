@@ -42,35 +42,33 @@ Clique em "Add secret".
 Agora, precisamos dizer à pipeline para usar esse segredo.
 
 3. Workflow do GitHub Actions Atualizado
-Eu atualizei o seu arquivo de workflow para que ele passe o segredo para o ambiente de build.
+   Eu atualizei o seu arquivo de workflow para que ele passe o segredo para o ambiente de build.
 
 # .github/workflows/deploy.yml
 
 name: Build and Deploy to GitHub Pages
 
 on:
-  push:
-    branches: [ "main" ]
-  workflow_dispatch:
+push:
+branches: [ "main" ]
+workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+contents: read
+pages: write
+id-token: write
 
 concurrency:
-  group: "pages"
-  cancel-in-progress: true
+group: "pages"
+cancel-in-progress: true
 
 jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    # Adiciona o segredo como uma variável de ambiente para o build
-    env:
-      NEXT_PUBLIC_GEMINI_API_KEY: ${{ secrets.NEXT_PUBLIC_GEMINI_API_KEY }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+build-and-deploy:
+runs-on: ubuntu-latest # Adiciona o segredo como uma variável de ambiente para o build
+env:
+NEXT_PUBLIC_GEMINI_API_KEY: ${{ secrets.NEXT_PUBLIC_GEMINI_API_KEY }}
+steps: - name: Checkout
+uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4

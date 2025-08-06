@@ -15,7 +15,7 @@ function AdminPage({ aboutData, initialData }) {
     setScrapedData(data);
   };
 
-  const title = `${SHORT_SITE_TITLE} - Painel Administrativo`
+  const title = `${SHORT_SITE_TITLE} - Painel Administrativo`;
 
   return (
     <div className="min-h-screen bg-surface-100">
@@ -28,7 +28,12 @@ function AdminPage({ aboutData, initialData }) {
           <div className="max-w-2xl mx-auto mb-8">
             <ScrapeAmazonForm onScrapeSuccess={handleScrapeSuccess} onLoading={setIsLoading} />
           </div>
-          <AdminForm scrapedData={scrapedData} isLoading={isLoading} setIsLoading={setIsLoading} initialData={initialData} />
+          <AdminForm
+            scrapedData={scrapedData}
+            isLoading={isLoading}
+            setIsLoading={setIsLoading}
+            initialData={initialData}
+          />
         </div>
       </main>
     </div>
@@ -36,11 +41,11 @@ function AdminPage({ aboutData, initialData }) {
 }
 
 AdminPage.auth = {
-  role: "admin",
+  role: 'admin',
   loading: <div>Carregando...</div>,
-}
+};
 
-export default AdminPage
+export default AdminPage;
 
 export async function getServerSideProps(context) {
   const { edit, date } = context.query;
@@ -51,9 +56,9 @@ export async function getServerSideProps(context) {
   }
 
   return {
-    props: { 
+    props: {
       aboutData: getAboutData(),
       initialData: promoData ? JSON.parse(JSON.stringify(promoData)) : null,
-    }, 
+    },
   };
 }

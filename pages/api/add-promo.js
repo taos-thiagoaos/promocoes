@@ -11,7 +11,10 @@ async function handler(req, res) {
   }
 
   // Verifica se o token tem o formato correto
-  if (!process.env.GITHUB_TOKEN.startsWith('ghp_') && !process.env.GITHUB_TOKEN.startsWith('github_pat_')) {
+  if (
+    !process.env.GITHUB_TOKEN.startsWith('ghp_') &&
+    !process.env.GITHUB_TOKEN.startsWith('github_pat_')
+  ) {
     return res.status(500).json({ error: 'Token do GitHub parece estar em formato inválido.' });
   }
 
@@ -23,7 +26,6 @@ async function handler(req, res) {
   const octokit = new Octokit(octokitConfig);
   const owner = 'taos-thiagoaos';
   const repo = 'promocoes';
-  
 
   try {
     // Verifica se o repositório existe e se temos acesso
@@ -33,23 +35,23 @@ async function handler(req, res) {
       console.log('Permissões do repositório:', {
         admin: repoInfo.data.permissions?.admin,
         push: repoInfo.data.permissions?.push,
-        pull: repoInfo.data.permissions?.pull
+        pull: repoInfo.data.permissions?.pull,
       });
     } catch (repoError) {
       console.error('Erro ao acessar repositório:', repoError.message);
-      
+
       // Tenta listar os repositórios do usuário para debug
       try {
         const { data: repos } = await octokit.repos.listForAuthenticatedUser();
-        const repoNames = repos.map(r => r.name);
+        const repoNames = repos.map((r) => r.name);
         console.log('Repositórios disponíveis:', repoNames);
-        
-        return res.status(500).json({ 
-          error: `Repositório ${owner}/${repo} não encontrado. Repositórios disponíveis: ${repoNames.join(', ')}` 
+
+        return res.status(500).json({
+          error: `Repositório ${owner}/${repo} não encontrado. Repositórios disponíveis: ${repoNames.join(', ')}`,
         });
       } catch (listError) {
-        return res.status(500).json({ 
-          error: `Repositório ${owner}/${repo} não encontrado e não foi possível listar repositórios disponíveis.` 
+        return res.status(500).json({
+          error: `Repositório ${owner}/${repo} não encontrado e não foi possível listar repositórios disponíveis.`,
         });
       }
     }
@@ -57,15 +59,15 @@ async function handler(req, res) {
     console.log('body recebido:', req.body);
 
     const { title, text, link, image, startDate, coupon, id } = req.body;
-    
+
     let finalImageUrl = req.body.imageUrl; // Para edições
 
     if (!finalImageUrl) {
       try {
         console.log('Processando imagem base64...');
-        
+
         const imageBuffer = base64ToBuffer(image);
-        
+
         // Melhora a extração da extensão da imagem
         let imageExtension = 'jpeg'; // default
         const mimeTypeMatch = image.match(/data:image\/([^;]+)/);
@@ -73,9 +75,9 @@ async function handler(req, res) {
           imageExtension = mimeTypeMatch[1];
           if (imageExtension === 'jpg') imageExtension = 'jpeg';
         }
-        
+
         console.log('Image extension detected:', imageExtension);
-        
+
         const imageName = `${Date.now()}-${slugify(title.toLowerCase(), 30)}.${imageExtension}`;
         const imagePath = `public/images/anuncios/${imageName}`;
 
@@ -87,14 +89,13 @@ async function handler(req, res) {
           content: imageBuffer.toString('base64'),
           branch: 'main',
         });
-        
+
         finalImageUrl = `/images/anuncios/${imageName}`;
         console.log('Imagem uploaded com sucesso:', finalImageUrl);
-        
       } catch (imageError) {
         console.error('Erro ao fazer upload da imagem:', imageError);
-        return res.status(500).json({ 
-          error: `Falha ao fazer upload da imagem: ${imageError.message}` 
+        return res.status(500).json({
+          error: `Falha ao fazer upload da imagem: ${imageError.message}`,
         });
       }
     }
@@ -130,7 +131,7 @@ async function handler(req, res) {
         throw error;
       }
       console.log('Arquivo JSON não existe, será criado');
-      
+
       // Verifica se o diretório data existe, se não, cria
       try {
         await octokit.repos.getContent({ owner, repo, path: 'data' });
@@ -153,7 +154,7 @@ async function handler(req, res) {
     let updatedContent;
     // Se for uma edição, substitui o item existente
     if (id) {
-      updatedContent = existingJsonContent.map(p => p.id === id ? promoData : p);
+      updatedContent = existingJsonContent.map((p) => (p.id === id ? promoData : p));
       console.log('Atualizando anúncio existente');
     } else {
       existingJsonContent.push(promoData);
@@ -171,35 +172,36 @@ async function handler(req, res) {
         sha: existingJsonSha,
         branch: 'main',
       });
-      
+
       console.log('Arquivo JSON salvo com sucesso');
     } catch (jsonError) {
       console.error('Erro ao salvar arquivo JSON:', jsonError);
-      return res.status(500).json({ 
-        error: `Falha ao salvar dados do anúncio: ${jsonError.message}` 
+      return res.status(500).json({
+        error: `Falha ao salvar dados do anúncio: ${jsonError.message}`,
       });
     }
 
     res.status(200).json({ message: `Anúncio ${id ? 'atualizado' : 'adicionado'} com sucesso!` });
   } catch (error) {
     console.error('Erro no GitHub:', error);
-    
+
     // Tratamento específico de erros
     if (error.status === 404) {
-      res.status(500).json({ 
-        error: 'Repositório não encontrado ou sem permissão de acesso. Verifique o nome do repositório e as permissões do token.' 
+      res.status(500).json({
+        error:
+          'Repositório não encontrado ou sem permissão de acesso. Verifique o nome do repositório e as permissões do token.',
       });
     } else if (error.status === 401) {
-      res.status(500).json({ 
-        error: 'Token do GitHub inválido ou sem permissões necessárias.' 
+      res.status(500).json({
+        error: 'Token do GitHub inválido ou sem permissões necessárias.',
       });
     } else if (error.status === 403) {
-      res.status(500).json({ 
-        error: 'Acesso negado. Verifique se o token tem permissões de escrita no repositório.' 
+      res.status(500).json({
+        error: 'Acesso negado. Verifique se o token tem permissões de escrita no repositório.',
       });
     } else {
-      res.status(500).json({ 
-        error: `Falha na operação com o GitHub: ${error.message}` 
+      res.status(500).json({
+        error: `Falha na operação com o GitHub: ${error.message}`,
       });
     }
   }

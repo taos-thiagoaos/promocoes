@@ -4,14 +4,29 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Header from '../../../components/Header';
 import Anuncio from '../../../components/Anuncio';
-import { getAllPromos, getPromoBySlug, getSuggestedPromos, getFixedLinks, getFixedAnuncios, getAboutData, getAllStores } from '../../../lib/api';
+import {
+  getAllPromos,
+  getPromoBySlug,
+  getSuggestedPromos,
+  getFixedLinks,
+  getFixedAnuncios,
+  getAboutData,
+  getAllStores,
+} from '../../../lib/api';
 import { SITE_URL, SHORT_SITE_TITLE } from '@/config';
 import { AnuncioModel } from '../../../models/AnuncioModel';
 
-export default function AnuncioPage({ promo: promoData, suggested: suggestedData, fixedLinks, fixedAnuncios, aboutData, stores }) {
+export default function AnuncioPage({
+  promo: promoData,
+  suggested: suggestedData,
+  fixedLinks,
+  fixedAnuncios,
+  aboutData,
+  stores,
+}) {
   const router = useRouter();
-  const promo = useMemo(() => promoData ? new AnuncioModel(promoData) : null, [promoData]);
-  const suggested = useMemo(() => suggestedData.map(s => new AnuncioModel(s)), [suggestedData]);
+  const promo = useMemo(() => (promoData ? new AnuncioModel(promoData) : null), [promoData]);
+  const suggested = useMemo(() => suggestedData.map((s) => new AnuncioModel(s)), [suggestedData]);
 
   const handleEdit = (promoToEdit) => {
     localStorage.setItem('editAnuncioData', JSON.stringify(promoToEdit));
@@ -51,7 +66,7 @@ export default function AnuncioPage({ promo: promoData, suggested: suggestedData
 
 export async function getStaticPaths() {
   const promos = getAllPromos();
-  const paths = promos.map(promo => ({
+  const paths = promos.map((promo) => ({
     params: {
       date: promo.date,
       slug: promo.slug,
@@ -65,7 +80,7 @@ export async function getStaticProps({ params }) {
   if (!promo) {
     return { notFound: true };
   }
-  
+
   const suggested = getSuggestedPromos(promo.id);
 
   return {

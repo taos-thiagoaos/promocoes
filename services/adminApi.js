@@ -5,7 +5,7 @@
  * @returns {Promise<object>} Os dados da resposta da API.
  */
 async function fetchApi(endpoint, options) {
-  const response = await fetch(endpoint, options);  
+  const response = await fetch(endpoint, options);
   if (!response.ok) {
     throw new Error(data.error || 'Ocorreu um erro na API.');
   }

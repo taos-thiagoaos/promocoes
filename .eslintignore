@@ -1,0 +1,6 @@
+*.config.js
+*.config.mjs
+next.config.js
+postcss.config.js
+tailwind.config.js
+start-dev.fish

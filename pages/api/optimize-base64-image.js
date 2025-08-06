@@ -28,9 +28,8 @@ export async function handler(req, res) {
     const reduceSize = originalSize - optimizedSize;
 
     return res.status(200).json({ optimizedImage, reduceSize });
-
   } catch (error) {
-    console.error("Erro ao otimizar a imagem base64:", error);
+    console.error('Erro ao otimizar a imagem base64:', error);
     return res.status(500).json({ error: 'Falha ao otimizar a imagem.' });
   }
 }

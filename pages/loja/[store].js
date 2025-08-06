@@ -4,16 +4,30 @@ import Header from '../../components/Header';
 import Anuncio from '../../components/Anuncio';
 import Sidebar from '../../components/Sidebar';
 import Paginacao from '../../components/Paginacao';
-import { getPromosByStore, getFixedLinks, getFixedAnuncios, getAboutData, getAllStores } from '../../lib/api';
+import {
+  getPromosByStore,
+  getFixedLinks,
+  getFixedAnuncios,
+  getAboutData,
+  getAllStores,
+} from '../../lib/api';
 import { SITE_URL, SITE_TITLE } from '../../config';
 import { AnuncioModel } from '../../models/AnuncioModel';
 
 const PROMOS_PER_PAGE = 20;
 
-export default function StorePage({ promos: promosData, fixedLinks, fixedAnuncios, aboutData, stores, storeName, pageImage }) {
+export default function StorePage({
+  promos: promosData,
+  fixedLinks,
+  fixedAnuncios,
+  aboutData,
+  stores,
+  storeName,
+  pageImage,
+}) {
   const [currentPage, setCurrentPage] = useState(1);
 
-  const promos = useMemo(() => promosData.map(p => new AnuncioModel(p)), [promosData]);
+  const promos = useMemo(() => promosData.map((p) => new AnuncioModel(p)), [promosData]);
 
   const totalPages = Math.ceil(promos.length / PROMOS_PER_PAGE);
   const startIndex = (currentPage - 1) * PROMOS_PER_PAGE;
@@ -26,7 +40,7 @@ export default function StorePage({ promos: promosData, fixedLinks, fixedAnuncio
 
   return (
     <div className="min-h-screen bg-surface-100">
-       <Head>
+      <Head>
         <title>{pageTitle}</title>
         <meta name="description" content={pageDescription} />
         <meta property="og:title" content={pageTitle} />
@@ -39,15 +53,21 @@ export default function StorePage({ promos: promosData, fixedLinks, fixedAnuncio
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row">
           <div className="w-full lg:w-3/4">
-            <h1 className="text-3xl font-bold mb-6 border-b pb-4">Promoções da Loja: <span className="text-brand-primary capitalize">{storeName}</span></h1>
+            <h1 className="text-3xl font-bold mb-6 border-b pb-4">
+              Promoções da Loja: <span className="text-brand-primary capitalize">{storeName}</span>
+            </h1>
             {currentPromos.length > 0 ? (
-              currentPromos.map((promo) => (<Anuncio key={promo.id} promo={promo} />))
+              currentPromos.map((promo) => <Anuncio key={promo.id} promo={promo} />)
             ) : (
               <div className="bg-white rounded-xl shadow-lg p-8 text-center">
                 <h2 className="text-2xl font-bold">Nenhuma promoção encontrada para esta loja.</h2>
               </div>
             )}
-            <Paginacao currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+            <Paginacao
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
           </div>
           <Sidebar links={fixedLinks} anuncios={fixedAnuncios} stores={stores} />
         </div>
