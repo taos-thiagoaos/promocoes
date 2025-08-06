@@ -27,13 +27,29 @@ export default function Anuncio({ promo, isDetailPage = false, isPreview = false
     }
   }, [promo.date]);
 
+const htmlToWhatsappFormat = (html) => {
+  let text = html
+    .replace(/<strong>(.*?)<\/strong>/gi, '*$1*')
+    .replace(/<b>(.*?)<\/b>/gi, '*$1*')
+    .replace(/<em>(.*?)<\/em>/gi, '_$1_')
+    .replace(/<i>(.*?)<\/i>/gi, '_$1_')
+    .replace(/<u>(.*?)<\/u>/gi, '~$1~')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/?[^>]+(>|$)/g, ""); // Remove outras tags
+  return text;
+}
+
+  
   const handleShare = (e) => {
     e.preventDefault();
     e.stopPropagation();
+
+const formattedText = htmlToWhatsappFormat(promo.text);
+
     if (navigator.share) {
       navigator.share({
         title: promo.title,
-        text: promo.text,
+        text: formattedText,
         url: promo.shareUrl,
       }).catch(console.error);
     } else {
