@@ -41,8 +41,13 @@ export class AnuncioModel {
     return `${SITE_URL}${this.imageUrl}`;
   }
 
-  get shareMessage() {
+  get shareNavitatorMessage() {
     const formattedText = htmlToTextFormat(this.text);
-    return `${this.title}\n\n${formattedText}\n\nAcesse no site: ${this.shareUrl}\nOu direto na ${this.store}: ${this.link}`;
+    return `\n${formattedText}\n\nAcesse na loja ${this.store}: ${this.link}`;
+  }
+
+  get shareClipboardMessage() {
+    const formattedText = htmlToTextFormat(this.text);
+    return `${this.title}\n\n${formattedText}\n\nAcesse na loja ${this.store}: ${this.link}\nOu no nosso site: ${this.shareUrl}`;
   }
 }

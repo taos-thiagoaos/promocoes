@@ -51,12 +51,12 @@ export default function Anuncio({
       navigator
         .share({
           title: promo.title,
-          text: promo.shareMessage,
+          text: promo.shareNavitatorMessage,
           url: promo.shareUrl,
         })
         .catch(console.error);
     } else {
-      navigator.clipboard.writeText(promo.shareMessage);
+      navigator.clipboard.writeText(promo.shareClipboardMessage);
       alert('Texto copiado para a área de transferência!');
     }
   };
