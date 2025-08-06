@@ -27,7 +27,7 @@ export default function Anuncio({
   const [updateSuccess, setUpdateSuccess] = useState('');
   const [showPromptModal, setShowPromptModal] = useState(false);
   const [customPrompt, setCustomPrompt] = useState(
-    `Você é um especialista em marketing para blogs de promoções. Crie um texto curto e persuasivo para um post de blog sobre o seguinte produto: '${promo.title}'. Use emojis para deixar o texto mais atrativo. Para formatação, use apenas as tags HTML <strong> para negrito e <em> para itálico. Para quebras de linha, use a tag <br>. Crie um senso de urgência e não inclua o link do produto no texto.`
+    `Você é um especialista em marketing para blogs de promoções. Crie um texto curto e persuasivo para um post de blog sobre o seguinte produto: '${promo.title}'. Use emojis para deixar o texto mais atrativo. Para formatação, use apenas as tags HTML <strong> para negrito e <em> para itálico. Para quebras de linha, use a tag <br>. Crie um senso de urgência e não inclua o link do produto no texto. O texto tem que ter no máximo 200 caracteres.`
   );
 
   useEffect(() => {
