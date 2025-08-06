@@ -12,6 +12,9 @@ import {
   deletePromo,
 } from '../services/adminApi';
 
+const PRODUCT_TITLE_TAG = '[PRODUCT_TITLE]';
+const PROMPT_TEMPLATE = `Você é um especialista em marketing para blogs de promoções. Crie um texto curto e persuasivo para um post de blog sobre o seguinte produto: ${PRODUCT_TITLE_TAG}. Use emojis para deixar o texto mais atrativo. Para formatação, use apenas as tags HTML <strong> para negrito e <em> para itálico. Para quebras de linha, use a tag <br>. Crie um senso de urgência e não inclua o link do produto no texto. O texto tem que ter no máximo 200 caracteres.`
+
 export default function Anuncio({
   promo,
   isDetailPage = false,
@@ -27,7 +30,7 @@ export default function Anuncio({
   const [updateSuccess, setUpdateSuccess] = useState('');
   const [showPromptModal, setShowPromptModal] = useState(false);
   const [customPrompt, setCustomPrompt] = useState(
-    `Você é um especialista em marketing para blogs de promoções. Crie um texto curto e persuasivo para um post de blog sobre o seguinte produto: '${promo.title}'. Use emojis para deixar o texto mais atrativo. Para formatação, use apenas as tags HTML <strong> para negrito e <em> para itálico. Para quebras de linha, use a tag <br>. Crie um senso de urgência e não inclua o link do produto no texto. O texto tem que ter no máximo 200 caracteres.`
+    PROMPT_TEMPLATE.replace(PRODUCT_TITLE_TAG, promo.title)
   );
 
   useEffect(() => {
@@ -42,6 +45,11 @@ export default function Anuncio({
       setFormattedDate(promo.date);
     }
   }, [promo.date]);
+
+  const prepareAndShowModal = () => {
+    setShowPromptModal(true);
+    setCustomPrompt(`${PROMPT_TEMPLATE.replace(PRODUCT_TITLE_TAG, promo.title)}. \nEssa é a descrição do produto atual:\n${promo.text}\n----\n`);
+  }
 
   const handleShare = (e) => {
     e.preventDefault();
@@ -229,7 +237,7 @@ export default function Anuncio({
             {session && isPreview && (
               <>
                 <button
-                  onClick={() => setShowPromptModal(true)}
+                  onClick={() => prepareAndShowModal()}
                   disabled={isLoading}
                   className="btn btn-secondary flex items-center justify-center gap-2 disabled:opacity-50"
                 >
