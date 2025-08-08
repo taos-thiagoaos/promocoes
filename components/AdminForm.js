@@ -35,7 +35,8 @@ export default function AdminForm({ scrapedData, isLoading, setIsLoading, initia
 
       previewDataFromFormData(data);
     }
-  }, [scrapedData, formData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scrapedData]);
 
   useEffect(() => {
     if (initialData) {

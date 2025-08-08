@@ -56,8 +56,6 @@ async function handler(req, res) {
       }
     }
 
-    console.log('body recebido:', req.body);
-
     const { title, text, link, image, startDate, coupon, id } = req.body;
 
     let finalImageUrl = req.body.imageUrl; // Para edições
