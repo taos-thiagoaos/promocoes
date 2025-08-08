@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import Head from 'next/head';
 import Header from '../components/Header';
+import FlashDealAlert from '../components/FlashDealAlert';
 import Anuncio from '../components/Anuncio';
 import Sidebar from '../components/Sidebar';
 import Paginacao from '../components/Paginacao';
@@ -48,6 +49,7 @@ export default function Home({
         <meta property="twitter:card" content="summary_large_image" />
       </Head>
       <Header title={SITE_TITLE} />
+      <FlashDealAlert anuncios={allPromos} />
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row">
           <div className="w-full lg:w-3/4">

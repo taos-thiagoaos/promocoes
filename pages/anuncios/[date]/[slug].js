@@ -3,6 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Header from '../../../components/Header';
+import FlashDealAlertSingle from '../../../components/FlashDealAlertSingle';
 import Anuncio from '../../../components/Anuncio';
 import {
   getAllPromos,

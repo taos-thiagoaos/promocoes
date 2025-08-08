@@ -15,6 +15,7 @@ export class AnuncioModel {
     this.coupon = data.coupon;
     this.store = data.store;
     this.slug = data.slug || slugify(this.title);
+    this.expiresAt = data.expiresAt || null;
   }
 
   /**

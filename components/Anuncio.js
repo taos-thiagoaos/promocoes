@@ -13,7 +13,7 @@ import {
 } from '../services/adminApi';
 
 const PRODUCT_TITLE_TAG = '[PRODUCT_TITLE]';
-const PROMPT_TEMPLATE = `Você é um especialista em marketing para blogs de promoções. Crie um texto curto e persuasivo para um post de blog sobre o seguinte produto: ${PRODUCT_TITLE_TAG}. Use emojis para deixar o texto mais atrativo. Para formatação, use apenas as tags HTML <strong> para negrito e <em> para itálico. Para quebras de linha, use a tag <br>. Crie um senso de urgência e não inclua o link do produto no texto. O texto tem que ter no máximo 200 caracteres.`
+const PROMPT_TEMPLATE = `Você é um especialista em marketing para blogs de promoções. Crie um texto curto e persuasivo para um post de blog sobre o seguinte produto: ${PRODUCT_TITLE_TAG}. Use emojis para deixar o texto mais atrativo. Para formatação, use apenas as tags HTML <strong> para negrito e <em> para itálico. Para quebras de linha, use a tag <br>. Crie um senso de urgência e não inclua o link do produto no texto. O texto tem que ter no máximo 200 caracteres.`;
 
 export default function Anuncio({
   promo,
@@ -48,8 +48,10 @@ export default function Anuncio({
 
   const prepareAndShowModal = () => {
     setShowPromptModal(true);
-    setCustomPrompt(`${PROMPT_TEMPLATE.replace(PRODUCT_TITLE_TAG, promo.title)}. \nEssa é a descrição do produto atual:\n${promo.text}\n----\n`);
-  }
+    setCustomPrompt(
+      `${PROMPT_TEMPLATE.replace(PRODUCT_TITLE_TAG, promo.title)}. \nEssa é a descrição do produto atual:\n${promo.text}\n----\n`
+    );
+  };
 
   const handleShare = (e) => {
     e.preventDefault();
@@ -145,6 +147,27 @@ export default function Anuncio({
   const createMarkup = (text) => ({ __html: text ? text.replace(/\n/g, '<br />') : '' });
   const TitleComponent = isDetailPage ? 'h1' : 'h2';
 
+  // ...existing code...
+  const expiresSoon =
+    promo.expiresAt &&
+    (() => {
+      const now = new Date();
+      const expires = new Date(promo.expiresAt);
+      const soon = new Date(now.getTime() + 2 * 60 * 60 * 1000);
+      return expires > now && expires <= soon;
+    })();
+
+  function formatTimeLeft(expiresAt) {
+    const now = new Date();
+    const end = new Date(expiresAt);
+    const diff = Math.max(0, end - now);
+    const min = Math.floor(diff / 60000);
+    const hr = Math.floor(min / 60);
+    const minLeft = min % 60;
+    if (hr > 0) return `${hr}h ${minLeft}min`;
+    return `${minLeft}min`;
+  }
+
   return (
     <div className="bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row mb-8 transition-shadow duration-300 hover:shadow-2xl relative">
       {!isPreview && (
@@ -165,7 +188,7 @@ export default function Anuncio({
           </svg>
         </button>
       )}
-      <div className="md:w-64 lg:w-72 md:flex-shrink-0 flex items-center justify-center rounded-l-xl">
+      <div className="md:w-64 lg:w-72 md:flex-shrink-0 flex items-center justify-center rounded-l-xl relative">
         <Image
           className="h-full w-full object-contain p-2"
           src={promo.imageUrl}
@@ -177,6 +200,11 @@ export default function Anuncio({
             e.target.src = 'https://placehold.co/800x600/ef4444/ffffff?text=Imagem+Indisponível';
           }}
         />
+        {expiresSoon && (
+          <div className="absolute bottom-2 right-2 bg-yellow-400 text-black px-3 py-1 rounded-lg shadow font-bold text-xs">
+            Expira em {formatTimeLeft(promo.expiresAt)}
+          </div>
+        )}
       </div>
       <div className="p-6 md:p-8 flex-1 flex flex-col bg-surface-100  justify-between">
         <div>

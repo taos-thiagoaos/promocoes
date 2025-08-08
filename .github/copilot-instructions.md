@@ -1,9 +1,11 @@
 # Copilot Coding Agent Onboarding Instructions
 
 ## Repository Summary
+
 This repository is a Next.js-based blog for publishing and managing promotional offers, including Amazon deals. It features admin tools, scraping, image optimization, and integration with Google Gemini for AI-generated marketing text. The project is primarily in JavaScript/JSX, with some configuration in JSON and shell scripts.
 
 ## High-Level Information
+
 - **Type:** Web application (Next.js)
 - **Languages:** JavaScript, JSX, some shell scripts (fish), JSON
 - **Frameworks:** Next.js, React, TailwindCSS
@@ -15,6 +17,7 @@ This repository is a Next.js-based blog for publishing and managing promotional 
 - **Storage:** Local JSON files for data, no database
 
 ## Build, Run, and Validation Instructions
+
 - **Always run `npm install` before any build, run, or lint step.**
 - **Development:**
   - Start with: `npm run dev` (uses `fish ./start-dev.fish`)
@@ -37,6 +40,7 @@ This repository is a Next.js-based blog for publishing and managing promotional 
   - Lint and Prettier must pass before commit.
 
 ## Project Layout & Key Files
+
 - **Root files:**
   - `package.json` (scripts, dependencies)
   - `README.md` (project overview)
@@ -60,16 +64,31 @@ This repository is a Next.js-based blog for publishing and managing promotional 
 - **Image Optimization:**
   - `pages/api/optimize-image.js`, `pages/api/optimize-base64-image.js`
 
+## Coding Standards
+
+- **JavaScript/JSX:** Follow Airbnb style guide.
+- **Linting:** Use ESLint with rules defined in `.eslintrc.json`.
+- **Formatting:** Use Prettier with rules in `.prettierrc`.
+- **Commit Messages:** Use conventional commits (e.g., `feat:`, `fix:`, `chore:`).
+- **File Naming:** Use kebab-case for files and folders (e.g., `my-component.js`).
+- **Component Structure:** Use functional components with hooks, avoid unecessary class components.
+- **CSS:** Use TailwindCSS for styling, avoid inline styles.
+- **State Management:** Use React's built-in state and context API, no external state libraries.
+- **Avoid Duplicate Code:** Use shared components and utility functions to avoid repetition.
+
 ## Checks Before Commit
+
 - **Lint and Prettier:** All staged files are auto-fixed and formatted via pre-commit hook.
 - **No CI pipeline detected.** Manual validation required.
 - **Always validate changes by running the dev server and checking for runtime errors.**
 
 ## Additional Notes
+
 - **Scripts:** All main scripts are in `package.json`. Use `npm run <script>`.
 - **Configuration:** Lint, Prettier, and lint-staged configs are in the root. Adjust as needed for new file types.
 - **Environment:** Ensure required environment variables are set before running features that depend on them.
 - **Trust these instructions. Only search the repo if information here is incomplete or incorrect.**
 
 ---
+
 **End of Copilot Coding Agent Onboarding Instructions**
